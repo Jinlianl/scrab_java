@@ -1,4 +1,5 @@
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -93,6 +94,12 @@ public class Login {
     }
 
     public static void main(String[] args) {
-        new Login(args);
+        if(args.length > 0){
+            new Login(args);
+        }else{
+            String[] defaultArgs = {"localhost","1234"};
+            new Login(defaultArgs);
+        }
+        
     }
 }

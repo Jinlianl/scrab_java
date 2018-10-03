@@ -1,9 +1,10 @@
 package server;
 import java.net.*;
 import java.util.ArrayList;
-import java.io.*;
 
 import server.threads.*;
+
+import java.io.*;
 import ultility.*;
 
 public class Server{
@@ -11,7 +12,7 @@ public class Server{
         // Parsing service port and dictionary directory
         int port = 1234;
         if(args.length < 1){
-            System.out.println("argument missed, port set to default 1234");
+            System.out.println("argument missed, port set to default "+port);
         }else{
             port = Integer.parseInt(args[0]);
         }
@@ -19,9 +20,8 @@ public class Server{
         ArrayList<Player> players = new ArrayList<Player>();
         //initialize for loading dictionary
         ServerSocket s = new ServerSocket(port);
-        ArrayList<Socket> sockets;
         // start a login thread for socket connection
-        LoginThread loginThread = new LoginThread(players,nameList);
+        LoginThread loginThread = new LoginThread(players,nameList,s);
         loginThread.start();
         
     }
