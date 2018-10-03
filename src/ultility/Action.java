@@ -13,7 +13,7 @@ class Action implements Serializable{
     public static final int MOVE = 2;
     private static final long serialVersionUID = 1L;
     
-    private String actionType;
+    private int actionType;
     private String userName;
     private int coor_x;
     private int coor_y;
@@ -47,7 +47,7 @@ class Action implements Serializable{
     /**
      * @return the actionType
      */
-    public String getActionType() {
+    public int getActionType() {
         return actionType;
     }
     /**
