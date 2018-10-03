@@ -28,7 +28,7 @@ public class Login {
         label.setBounds(50, 50, 200, 20);
         panel.add(label);
 
-        JTextField textField = new JTextField();
+        final JTextField textField = new JTextField();
         textField.setBounds(50, 80, 200, 20);
         panel.add(textField);
 
@@ -38,9 +38,9 @@ public class Login {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    String word = textField.getText().toLowerCase();
-                    System.out.print(word);
-                    new GameHall();
+                    String username = textField.getText().toLowerCase();
+                    System.out.print(username);
+                    new GameHall(username);
                     window.setVisible(false);
 
                 } catch (Exception e1) {
@@ -55,7 +55,6 @@ public class Login {
     }
 
     public static void main(String[] args) {
-        //new Login();
-        new Scrabble();
+        new Login();
     }
 }
