@@ -5,14 +5,15 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import ultility.Action;
 
 public class Login {
     private JFrame window;
     private String host;
     private int port;
     private Socket socket;
-    private BufferedReader in;
-    private BufferedWriter out;
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
 
     public Login(String[] config) {
         this.host = config[0];
@@ -25,8 +26,8 @@ public class Login {
         try {
             this.socket = new Socket(this.host, this.port);
 
-            this.in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
-            this.out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
+            this.in = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
+            this.out = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 
             String received = in.readLine();
             if (received != null) {
@@ -69,10 +70,17 @@ public class Login {
                 try {
                     String username = textField.getText().toLowerCase();
                     System.out.print(username);
-                    // TODO：发送登陆信息到server, 等待server回应
-                    new GameHall(username, in, out);
-                    window.setVisible(false);
+                    Action a = new Action(Action.JOIN);
+                    a.setJoinGameInfo(username);
+                    out.writeObject(a);
+                    out.flush();
 
+                    Object obj = in.readObject();
+                    if (obj != null) {
+                        // TODO：等待server回应
+                        new GameHall(username, in, out);
+                        window.setVisible(false);
+                    }
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }

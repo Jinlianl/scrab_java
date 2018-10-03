@@ -8,9 +8,10 @@
 package ultility;
 import java.io.Serializable;
 
-class Action implements Serializable{
+public class Action implements Serializable{
     public static final int JOIN = 1;
     public static final int MOVE = 2;
+    public static final int PASS = 3;
     private static final long serialVersionUID = 1L;
     
     private int actionType;
@@ -21,7 +22,7 @@ class Action implements Serializable{
     private String expectWord;
 
 
-    Action(int type){
+    public Action(int type){
         actionType = type;
     }
 
@@ -40,7 +41,6 @@ class Action implements Serializable{
         this.coor_x = x;
         this.coor_y = y;
         this.expectWord = word;
-
     }
 
     

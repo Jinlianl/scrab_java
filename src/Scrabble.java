@@ -4,9 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.net.Socket;
+import java.io.*;
+import ultility.Action;
 
 public class Scrabble {
     private JFrame window;
@@ -22,10 +21,10 @@ public class Scrabble {
     private int y = -1;
     private String username;
 
-    private BufferedReader in;
-    private BufferedWriter out;
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
 
-    public Scrabble(String username, BufferedReader in, BufferedWriter out) {
+    public Scrabble(String username, ObjectInputStream in, ObjectOutputStream out) {
         this.username = username;
         this.in = in;
         this.out = out;
@@ -74,15 +73,24 @@ public class Scrabble {
     }
 
     private void ChooseWord(String word) {
-        // TODO：向server发送希望大家评判的word,x,y,ID,char到服务器
+        try {
+            Action a = new Action(Action.MOVE);
+            a.setMoveInfo(x, y, textFields[x][y].getText().charAt(0), word);
+            out.writeObject(a);
+            out.flush();
 
+            // TODO: 建立一个线程读取server发来的信息并处理。
 
-        for (int i = 0; i < 20; i++)
-            for (int j = 0; j < 20; j++) {
-                if (textFields[i][j].getText().length() == 0) {
-                    textFields[i][j].setEnabled(true);
+            for (int i = 0; i < 20; i++)
+                for (int j = 0; j < 20; j++) {
+                    if (textFields[i][j].getText().length() == 0) {
+                        textFields[i][j].setEnabled(true);
+                    }
                 }
-            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void Done() {
@@ -138,7 +146,14 @@ public class Scrabble {
     }
 
     private void Pass() {
-        // TODO: 发送pass相关的ACTION到server
+        try {
+            Action a = new Action(Action.PASS);
+            out.writeObject(a);
+            out.flush();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void BuildUpGUI() {

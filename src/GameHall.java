@@ -2,18 +2,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.net.Socket;
+import java.io.*;
 
 public class GameHall {
     private String username;
     private JFrame window;
-    private BufferedReader in;
-    private BufferedWriter out;
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
 
-    public GameHall(String username, BufferedReader in, BufferedWriter out) {
+    public GameHall(String username, ObjectInputStream in, ObjectOutputStream out) {
         this.username = username;
         this.in = in;
         this.out = out;
