@@ -5,9 +5,11 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 
 public class GameHall {
+    private String username;
     private JFrame window;
 
-    public GameHall() {
+    public GameHall(String username) {
+        this.username = username;
         this.BuildUpGUI();
     }
 
@@ -39,10 +41,30 @@ public class GameHall {
 
         JButton newGame = new JButton("Start a New Game");
         newGame.setBounds(120, 30, 160,40);
+        newGame.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    new Scrabble(username);
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
         panel.add(newGame);
 
         JButton join = new JButton("Join a Game");
         join.setBounds(120, 120, 160,40);
+        join.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    new Scrabble(username);
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
         panel.add(join);
 
         JButton logout = new JButton("Log out");
