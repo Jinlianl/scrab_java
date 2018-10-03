@@ -9,7 +9,6 @@ package ultility;
 import java.io.Serializable;
 
 public class Action implements Serializable{
-class Action implements Serializable{
     public static final int LOGIN = 0;
     public static final int JOIN = 1;
     public static final int MOVE = 2;
