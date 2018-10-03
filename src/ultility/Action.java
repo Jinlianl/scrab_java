@@ -43,7 +43,7 @@ class Action implements Serializable{
 
     }
 
-
+    
     /**
      * @return the actionType
      */
@@ -73,5 +73,11 @@ class Action implements Serializable{
      */
     public char getInput() {
         return input;
+    }
+    /**
+     * @return the expectWord
+     */
+    public String getExpectWord() {
+        return expectWord;
     }
 }
