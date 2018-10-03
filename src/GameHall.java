@@ -39,6 +39,7 @@ public class GameHall {
 
         JTextArea textArea = new JTextArea();
         textArea.setEnabled(false);
+        // TODO: 向server请求当前在线的玩家的名单，并定时更新
         textArea.setText("Ryan\nAmy\nBen");
         JScrollPane scroll = new JScrollPane(textArea);
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
