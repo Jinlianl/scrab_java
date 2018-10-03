@@ -2,14 +2,21 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.net.Socket;
 
 public class GameHall {
     private String username;
     private JFrame window;
+    private BufferedReader in;
+    private BufferedWriter out;
 
-    public GameHall(String username) {
+    public GameHall(String username, BufferedReader in, BufferedWriter out) {
         this.username = username;
+        this.in = in;
+        this.out = out;
         this.BuildUpGUI();
     }
 
@@ -45,7 +52,8 @@ public class GameHall {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    new Scrabble(username);
+                    // TODO：向server发送新游戏请求
+                    new Scrabble(username, in, out);
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
@@ -59,7 +67,8 @@ public class GameHall {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    new Scrabble(username);
+                    // TODO：向server发送加入一个游戏请求
+                    new Scrabble(username, in, out);
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }

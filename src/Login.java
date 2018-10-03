@@ -2,13 +2,42 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
+import java.io.*;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class Login {
     private JFrame window;
+    private String host;
+    private int port;
+    private Socket socket;
+    private BufferedReader in;
+    private BufferedWriter out;
 
-    public Login() {
+    public Login(String[] config) {
+        this.host = config[0];
+        this.port = Integer.parseInt(config[1]);
         this.BuildUpGUI();
+        this.connect();
+    }
+
+    private void connect() {
+        try {
+            this.socket = new Socket(this.host, this.port);
+
+            this.in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
+            this.out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
+
+            String received = in.readLine();
+            if (received != null) {
+                System.out.println("Message received: " + received);
+            }
+
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void BuildUpGUI() {
@@ -40,7 +69,8 @@ public class Login {
                 try {
                     String username = textField.getText().toLowerCase();
                     System.out.print(username);
-                    new GameHall(username);
+                    // TODO：发送登陆信息到server, 等待server回应
+                    new GameHall(username, in, out);
                     window.setVisible(false);
 
                 } catch (Exception e1) {
@@ -55,6 +85,6 @@ public class Login {
     }
 
     public static void main(String[] args) {
-        new Login();
+        new Login(args);
     }
 }

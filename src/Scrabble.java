@@ -4,9 +4,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.net.Socket;
 
 public class Scrabble {
-    private String username;
     private JFrame window;
     private JTextField[][] textFields = new JTextField[20][20];
     private JButton passButton;
@@ -15,11 +17,18 @@ public class Scrabble {
     private JLabel[] scores = new JLabel[4];
     private int players;
     private String[] playerNames = new String[3];
+
     private int x = -1;
     private int y = -1;
+    private String username;
 
-    public Scrabble(String username) {
+    private BufferedReader in;
+    private BufferedWriter out;
+
+    public Scrabble(String username, BufferedReader in, BufferedWriter out) {
         this.username = username;
+        this.in = in;
+        this.out = out;
         this.players = 1;
         this.playerNames[0] = "Your";
         this.BuildUpGUI();
@@ -65,7 +74,7 @@ public class Scrabble {
     }
 
     private void ChooseWord(String word) {
-        // 向server发送希望大家评判的词，x,y,ID,char到服务器
+        // TODO：向server发送希望大家评判的word,x,y,ID,char到服务器
 
 
         for (int i = 0; i < 20; i++)
@@ -107,16 +116,29 @@ public class Scrabble {
         }
         else {
             // 报错给客户端，没有填写东西，确定要pass吗？确定则执行pass方法。
+            Object[] options ={"Sure", "Cancel"};
+            String message = "You have NOT filled a box. \n Do you want to PASS?";
+            int rc = JOptionPane.showOptionDialog(window, message, "Warning", JOptionPane.CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+            if (rc == 0) this.Pass();
+        }
+    }
+    private void confirmPass() {
+        if (x > -1 && y > -1) {
+            // 让用户确定是否pass
+            Object[] options ={"Sure", "Cancel"};
+            String message = "You HAVE filled a box. \n Do you want to PASS?";
+            int rc = JOptionPane.showOptionDialog(window, message, "Warning", JOptionPane.CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+            if (rc == 0) this.Pass();
+        }
+        else {
+            this.Pass();
         }
     }
 
     private void Pass() {
-        if (x > -1 && y > -1) {
-            // 让用户确定是否pass
-        }
-        else {
-            // 直接pass
-        }
+        // TODO: 发送pass相关的ACTION到server
     }
 
     private void BuildUpGUI() {
@@ -187,7 +209,7 @@ public class Scrabble {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    Pass();
+                    confirmPass();
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
