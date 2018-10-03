@@ -25,14 +25,16 @@ public class LoginThread extends Thread{
                 clientInput = socket.getInputStream();
                 //get login info from client
                 ois = new ObjectInputStream(new BufferedInputStream(clientInput));
-                // Object obj = ois.readObject();
-                // if( obj!= null || (Action)obj.getActionType() == Action.LOGIN){
-                //     String userName = (Action) obj.getUserName();
-                //     Player player = new Player(userName, socket);
-                //     players.add(player);
-                //     nameList.add(userName);
-                //     System.out.println( userName + "connect sucessful!");
-                // }
+                Object obj = ois.readObject();
+                System.out.println(obj.getClass());
+                if( obj.getClass() == Action.class){
+                    Action action = (Action)obj;
+                    String userName = action.getUserName();
+                    Player player = new Player(userName, socket);
+                    players.add(player);
+                    nameList.add(userName);
+                    System.out.println( userName + "connect sucessful!");
+                }
                 
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
