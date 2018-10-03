@@ -9,6 +9,8 @@ package ultility;
 import java.io.Serializable;
 
 public class Action implements Serializable{
+class Action implements Serializable{
+    public static final int LOGIN = 0;
     public static final int JOIN = 1;
     public static final int MOVE = 2;
     public static final int PASS = 3;
@@ -26,6 +28,12 @@ public class Action implements Serializable{
         actionType = type;
     }
 
+    /**
+     * set the info for a join game request
+     */
+    public void setLoginInfo(String userName) {
+        this.userName = userName;
+    }
     /**
      * set the info for a join game request
      */
