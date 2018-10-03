@@ -9,17 +9,46 @@ package ultility;
 import java.io.Serializable;
 
 class Action implements Serializable{
+    public static final int JOIN = 1;
+    public static final int MOVE = 2;
     private static final long serialVersionUID = 1L;
+    
+    private String actionType;
     private String userName;
     private int coor_x;
     private int coor_y;
     private char input;
+    private String expectWord;
 
-    Action(String uName,int x, int y, char in){
-        userName = uName;
-        coor_x = x;
-        coor_y = y;
-        input = in;
+
+    Action(int type){
+        actionType = type;
+    }
+
+    /**
+     * set the info for a join game request
+     */
+    public void setJoinGameInfo(String userName) {
+        this.userName = userName;
+    }
+
+    /**
+     * @param input the input to set
+     */
+    public void setMoveInfo(int x,int y,char input, String word) {
+        this.input = input;
+        this.coor_x = x;
+        this.coor_y = y;
+        this.expectWord = word;
+
+    }
+
+
+    /**
+     * @return the actionType
+     */
+    public String getActionType() {
+        return actionType;
     }
     /**
      * @return the userName
