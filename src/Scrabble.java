@@ -6,6 +6,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.*;
 import ultility.Action;
+import ultility.Response;
+import java.util.ArrayList;
 
 public class Scrabble {
     private JFrame window;
@@ -14,8 +16,7 @@ public class Scrabble {
     private JButton doneButton;
     private JLabel turnLabel;
     private JLabel[] scores = new JLabel[4];
-    private int players;
-    private String[] playerNames = new String[3];
+    private ArrayList<String> playerNames = new ArrayList<String>();
 
     private int x = -1;
     private int y = -1;
@@ -28,8 +29,7 @@ public class Scrabble {
         this.username = username;
         this.in = in;
         this.out = out;
-        this.players = 1;
-        this.playerNames[0] = "Your";
+        this.playerNames.add(username);
         this.BuildUpGUI();
         this.BuildUpThread();
     }
@@ -39,9 +39,62 @@ public class Scrabble {
             public void run() {
                 try {
                     while (true) {
-                        Object object = in.readObject();
-                        if (object != null) {
-                            // TODO: 读取server发来的信息并处理。
+                        Response r = (Response) in.readObject();
+                        if (r != null) {
+                            // 读取server发来的信息并处理。
+                            int type = r.getResponseType();
+                            switch (type) {
+                                case Response.TURN:
+                                    if (r.getTurn().equals(username)) {
+                                        // 设定为自己的turn，可以操作了
+                                        turnLabel.setText("Your Turn!");
+                                        for (int i = 0; i < 20; i++)
+                                            for (int j = 0; j < 20; j++) {
+                                                if (textFields[i][j].getText().length() == 0) {
+                                                    textFields[i][j].setEnabled(true);
+                                                }
+                                            }
+                                        doneButton.setEnabled(true);
+                                        passButton.setEnabled(true);
+                                    }
+                                    else {
+                                        turnLabel.setText(r.getTurn() + "'s Turn!");
+                                    }
+                                    break;
+                                case Response.JUDGE:
+                                    Object[] options ={"Agree", "Disagree"};
+                                    String message = r.getUserName() + " wants to get score by " + r.getExpectWord() + ".";
+                                    int rc = JOptionPane.showOptionDialog(window, message, "Option", JOptionPane.CANCEL_OPTION,
+                                            JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                                    Action a = new Action(Action.JUDGE);
+                                    // 直接关闭视为同意
+                                    if (rc < 1) a.setJudgeINfo(true);
+                                    else a.setJudgeINfo(false);
+                                    out.writeObject(a);
+                                    out.flush();
+                                    break;
+                                case Response.MOVE:
+                                    textFields[r.getCoor_x()][r.getCoor_y()].setText(r.getInput());
+                                    break;
+                                case Response.SCORE:
+                                    String msg = r.getMessage().replace(username, "You");
+                                    Object[] option = {"OK"};
+                                    JOptionPane.showOptionDialog(window, msg, "Info", JOptionPane.CANCEL_OPTION,
+                                            JOptionPane.QUESTION_MESSAGE, null, option, option[0]);
+                                    if (r.getScore() > 0) {
+                                        for (int i = 0; i < playerNames.size(); i++) {
+                                            if (r.getUserName().equals(playerNames.get(i))) {
+                                                String oldScore = scores[i].getText().split(":")[1].replace(" ", "");
+                                                String newScore = String.valueOf(Integer.parseInt(oldScore) + r.getScore());
+                                                scores[i].setText(scores[i].getText().replace(oldScore, newScore));
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
                     }
                 }
@@ -93,18 +146,18 @@ public class Scrabble {
     }
 
     private void ChooseWord(String word) {
+        for (int i = 0; i < 20; i++)
+            for (int j = 0; j < 20; j++) {
+                textFields[i][j].setEnabled(false);
+            }
+        doneButton.setEnabled(false);
+        passButton.setEnabled(false);
+
         try {
             Action a = new Action(Action.MOVE);
-            a.setMoveInfo(x, y, textFields[x][y].getText().charAt(0), word);
+            a.setMoveInfo(x, y, textFields[x][y].getText(), word);
             out.writeObject(a);
             out.flush();
-
-            for (int i = 0; i < 20; i++)
-                for (int j = 0; j < 20; j++) {
-                    if (textFields[i][j].getText().length() == 0) {
-                        textFields[i][j].setEnabled(true);
-                    }
-                }
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -116,25 +169,23 @@ public class Scrabble {
             textFields[x][y].setEnabled(false);
             String[] tokens = this.checkWords();
             if (tokens[0].length() > 1 && tokens[1].length() > 1) {
-                Object[] options ={tokens[0], tokens[1], "None"};
+                Object[] options ={tokens[0], tokens[1], "Do not submit"};
                 String message = "Which word do you want to submit for judgement?";
                 int rc = JOptionPane.showOptionDialog(window, message, "Option", JOptionPane.CANCEL_OPTION,
                         JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-                System.out.println(rc);
                 if (rc  < 0) rc = options.length - 1;
                 this.ChooseWord(options[rc].toString());
             }
             else if (tokens[0].length() < 2 && tokens[1].length() < 2) {
-                this.ChooseWord("None");
+                this.ChooseWord("Do not submit");
             }
             else {
                 String token;
                 if (tokens[0].length() > 1) token = tokens[0]; else token = tokens[1];
-                Object[] options ={token, "None"};
+                Object[] options ={token, "Do not submit"};
                 String message = "Which word do you want to submit for judgement?";
                 int rc = JOptionPane.showOptionDialog(window, message, "Option", JOptionPane.CANCEL_OPTION,
                         JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-                System.out.println(rc);
                 if (rc  < 0) rc = options.length - 1;
                 this.ChooseWord(options[rc].toString());
             }
@@ -164,6 +215,13 @@ public class Scrabble {
     }
 
     private void Pass() {
+        for (int i = 0; i < 20; i++)
+            for (int j = 0; j < 20; j++) {
+                textFields[i][j].setEnabled(false);
+            }
+        doneButton.setEnabled(false);
+        passButton.setEnabled(false);
+
         try {
             Action a = new Action(Action.PASS);
             out.writeObject(a);
@@ -204,10 +262,10 @@ public class Scrabble {
         turnLabel.setBounds(610+15,20,150,40);
         panel.add(turnLabel);
 
-        for (int i = 0; i < players; i++) {
+        for (int i = 0; i < playerNames.size(); i++) {
             JLabel score = new JLabel();
             if (i > 0) {
-                score.setText(playerNames[i-1] + "'s score: 0");
+                score.setText(playerNames.get(i) + "'s score: 0");
             }
             else {
                 score.setText("Your score: 0");

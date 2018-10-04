@@ -13,14 +13,16 @@ public class Action implements Serializable{
     public static final int JOIN = 1;
     public static final int MOVE = 2;
     public static final int PASS = 3;
+    public static final int JUDGE = 4;
     private static final long serialVersionUID = 1L;
     
     private int actionType;
     private String userName;
     private int coor_x;
     private int coor_y;
-    private char input;
+    private String input;
     private String expectWord;
+    private boolean agree;
 
 
     public Action(int type){
@@ -43,11 +45,15 @@ public class Action implements Serializable{
     /**
      * @param input the input to set
      */
-    public void setMoveInfo(int x,int y,char input, String word) {
+    public void setMoveInfo(int x,int y,String input, String word) {
         this.input = input;
         this.coor_x = x;
         this.coor_y = y;
         this.expectWord = word;
+    }
+
+    public void setJudgeINfo(boolean b) {
+        this.agree = b;
     }
 
     
@@ -78,7 +84,7 @@ public class Action implements Serializable{
     /**
      * @return the input
      */
-    public char getInput() {
+    public String getInput() {
         return input;
     }
     /**
@@ -86,5 +92,9 @@ public class Action implements Serializable{
      */
     public String getExpectWord() {
         return expectWord;
+    }
+
+    public boolean isAgree() {
+        return agree;
     }
 }

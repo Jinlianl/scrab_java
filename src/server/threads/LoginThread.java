@@ -22,6 +22,7 @@ public class LoginThread extends Thread{
         while(true){
             System.out.println("waiting for connection ...");
             try {
+                // TODO: 用户退出登录之后移除信息，发一个logout包？
                 Socket socket = s.accept(); // Wait and accept a connection
                 System.out.println("new connection");
                 clientInput = socket.getInputStream();
@@ -42,7 +43,7 @@ public class LoginThread extends Thread{
                         System.out.println( userName + "is already connected!");
                     }
                     else {
-                        Player player = new Player(userName, socket);
+                        Player player = new Player(userName, socket, ois, oos);
                         players.add(player);
                         nameList.add(userName);
                         // 返回客户端登录成功
@@ -51,6 +52,7 @@ public class LoginThread extends Thread{
                         oos.writeObject(r);
                         oos.flush();
                         System.out.println( userName + "connect sucessful!");
+                        new HallThread(player).start();
                     }
                 }
                 

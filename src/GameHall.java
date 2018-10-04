@@ -72,15 +72,24 @@ public class GameHall {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    // TODO：向server发送新游戏请求
+                    // 向server发送新游戏请求
                     Action a = new Action(Action.JOIN);
                     a.setJoinGameInfo(username);
                     out.writeObject(a);
                     out.flush();
 
                     Response r = (Response) in.readObject();
-                    
-                    new Scrabble(username, in, out);
+                    if (r != null) {
+                        // 处理server回应
+                        if (r.getStatus() == Response.SUCCESS) {
+                            new Scrabble(username, in, out);
+                        }
+                        else {
+                            Object[] options ={"OK"};
+                            JOptionPane.showOptionDialog(window, r.getMessage(), "Warning", JOptionPane.CANCEL_OPTION,
+                                    JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                        }
+                    }
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
@@ -109,6 +118,7 @@ public class GameHall {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
+                    // TODO: 向server发送logout包
                     System.exit(0);
                 } catch (Exception e1) {
                     e1.printStackTrace();
