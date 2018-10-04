@@ -19,9 +19,11 @@ class GameThread extends Thread{
         int judgeTurn = (turn + 1) % players.size();
         while (judgeTurn != turn) {
             try {
-                players.get(judgeTurn).getOos().writeObject(r);
-                players.get(judgeTurn).getOos().flush();
-                Action a = (Action) players.get(judgeTurn).getOis().readObject();
+                //先判断是否该轮玩家offline
+                Player judgePlayer = players.get(judgeTurn);
+                judgePlayer.getOos().writeObject(r);
+                judgePlayer.getOos().flush();
+                Action a = (Action) judgePlayer.getOis().readObject();
                 if (a != null) {
                     if (a.isAgree()) {
                         judgeTurn = (judgeTurn + 1) % players.size();
@@ -69,7 +71,14 @@ class GameThread extends Thread{
         while (true) {
             try {
                 Player currentPlayer = players.get(turn);
-
+                //判断该玩家是否在线
+                if(!currentPlayer.getSocket().isConnected()||currentPlayer.getSocket().isClosed()){
+                    System.out.println(currentPlayer.getUserName() +" player if offline");
+                    Response r = new Response(Response.LOGOUT);
+                    broadcast(r);
+                    // TODO：游戏结束.
+                    break;
+                }
                 Action a = (Action) currentPlayer.getOis().readObject();
                 if (a != null) {
                     int type = a.getActionType();
