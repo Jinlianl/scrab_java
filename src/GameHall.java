@@ -3,10 +3,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import ultility.Action;
+import ultility.Response;
 
 public class GameHall {
     private String username;
     private JFrame window;
+    private JTextArea userList;
     private ObjectInputStream in;
     private ObjectOutputStream out;
 
@@ -15,6 +18,27 @@ public class GameHall {
         this.in = in;
         this.out = out;
         this.BuildUpGUI();
+        //this.BuildUpThread();
+    }
+
+    private void BuildUpThread() {
+        Thread thread = new Thread() {
+            public void run() {
+                try {
+                    while (true) {
+                        Object object = in.readObject();
+                        if (object != null) {
+                            // TODO: 读取server发来的信息并处理。
+                            userList.setText("Ryan\nWWW\n");
+                        }
+                    }
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        thread.start();
     }
 
     private void BuildUpGUI() {
@@ -34,11 +58,9 @@ public class GameHall {
         label1.setBounds(10,0,100,20);
         panel.add(label1);
 
-        JTextArea textArea = new JTextArea();
-        textArea.setEnabled(false);
-        // TODO: 向server请求当前在线的玩家的名单，并定时更新
-        textArea.setText("Ryan\nAmy\nBen");
-        JScrollPane scroll = new JScrollPane(textArea);
+        this.userList = new JTextArea();
+        this.userList.setEnabled(false);
+        JScrollPane scroll = new JScrollPane(this.userList);
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scroll.setBounds(10, 20, 100, 240);
@@ -51,6 +73,13 @@ public class GameHall {
             public void actionPerformed(ActionEvent e) {
                 try {
                     // TODO：向server发送新游戏请求
+                    Action a = new Action(Action.JOIN);
+                    a.setJoinGameInfo(username);
+                    out.writeObject(a);
+                    out.flush();
+
+                    Response r = (Response) in.readObject();
+                    
                     new Scrabble(username, in, out);
                 } catch (Exception e1) {
                     e1.printStackTrace();

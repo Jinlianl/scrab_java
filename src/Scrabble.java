@@ -31,6 +31,26 @@ public class Scrabble {
         this.players = 1;
         this.playerNames[0] = "Your";
         this.BuildUpGUI();
+        this.BuildUpThread();
+    }
+
+    private void BuildUpThread() {
+        Thread thread = new Thread() {
+            public void run() {
+                try {
+                    while (true) {
+                        Object object = in.readObject();
+                        if (object != null) {
+                            // TODO: 读取server发来的信息并处理。
+                        }
+                    }
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        thread.start();
     }
 
     private String[] checkWords() {
@@ -78,8 +98,6 @@ public class Scrabble {
             a.setMoveInfo(x, y, textFields[x][y].getText().charAt(0), word);
             out.writeObject(a);
             out.flush();
-
-            // TODO: 建立一个线程读取server发来的信息并处理。
 
             for (int i = 0; i < 20; i++)
                 for (int j = 0; j < 20; j++) {

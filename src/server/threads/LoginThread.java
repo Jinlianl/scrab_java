@@ -18,10 +18,12 @@ public class LoginThread extends Thread{
     public void run(){
         InputStream clientInput;
         ObjectInputStream ois;
+        ObjectOutputStream oos;
         while(true){
             System.out.println("waiting for connection ...");
             try {
                 Socket socket = s.accept(); // Wait and accept a connection
+                System.out.println("new connection");
                 clientInput = socket.getInputStream();
                 //get login info from client
                 ois = new ObjectInputStream(new BufferedInputStream(clientInput));
@@ -30,10 +32,26 @@ public class LoginThread extends Thread{
                 if( obj.getClass() == Action.class){
                     Action action = (Action)obj;
                     String userName = action.getUserName();
-                    Player player = new Player(userName, socket);
-                    players.add(player);
-                    nameList.add(userName);
-                    System.out.println( userName + "connect sucessful!");
+                    oos = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+                    if (nameList.contains(userName)) {
+                        // 返回客户端登录失败
+                        Response r = new Response(Response.LOGIN);
+                        r.setLoginResponse(Response.FAIL, userName + "is already connected!");
+                        oos.writeObject(r);
+                        oos.flush();
+                        System.out.println( userName + "is already connected!");
+                    }
+                    else {
+                        Player player = new Player(userName, socket);
+                        players.add(player);
+                        nameList.add(userName);
+                        // 返回客户端登录成功
+                        Response r = new Response(Response.LOGIN);
+                        r.setLoginResponse(Response.SUCCESS, userName + "connect sucessful!");
+                        oos.writeObject(r);
+                        oos.flush();
+                        System.out.println( userName + "connect sucessful!");
+                    }
                 }
                 
                 } catch (Exception e) {

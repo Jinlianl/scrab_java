@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import ultility.Response;
 import ultility.Action;
 
 public class Login {
@@ -26,14 +27,7 @@ public class Login {
     private void connect() {
         try {
             this.socket = new Socket(this.host, this.port);
-
-            this.in = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
             this.out = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
-
-            String received = in.readLine();
-            if (received != null) {
-                System.out.println("Message received: " + received);
-            }
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
@@ -70,17 +64,27 @@ public class Login {
             public void actionPerformed(ActionEvent e) {
                 try {
                     String username = textField.getText().toLowerCase();
-                    System.out.print(username);
-                    Action a = new Action(Action.JOIN);
-                    a.setJoinGameInfo(username);
+                    System.out.println(username);
+                    Action a = new Action(Action.LOGIN);
+                    a.setLoginInfo(username);
                     out.writeObject(a);
                     out.flush();
 
-                    Object obj = in.readObject();
-                    if (obj != null) {
-                        // TODO：等待server回应
-                        new GameHall(username, in, out);
-                        window.setVisible(false);
+                    if (in == null) {
+                        in = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
+                    }
+                    Response r = (Response) in.readObject();
+                    if (r != null) {
+                        // 处理server回应
+                        if (r.getStatus() == Response.SUCCESS) {
+                            new GameHall(username, in, out);
+                            window.setVisible(false);
+                        }
+                        else {
+                            Object[] options ={"OK"};
+                            JOptionPane.showOptionDialog(window, r.getMessage(), "Warning", JOptionPane.CANCEL_OPTION,
+                                    JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                        }
                     }
                 } catch (Exception e1) {
                     e1.printStackTrace();
