@@ -14,6 +14,7 @@ public class Action implements Serializable{
     public static final int MOVE = 2;
     public static final int PASS = 3;
     public static final int JUDGE = 4;
+    public static final int LOGOUT = 10;
     private static final long serialVersionUID = 1L;
     
     private int actionType;

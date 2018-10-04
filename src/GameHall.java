@@ -79,10 +79,12 @@ public class GameHall {
                     out.flush();
 
                     Response r = (Response) in.readObject();
+                    System.out.println(r);
                     if (r != null) {
                         // 处理server回应
                         if (r.getStatus() == Response.SUCCESS) {
                             new Scrabble(username, in, out);
+                            System.gc();
                         }
                         else {
                             Object[] options ={"OK"};

@@ -9,11 +9,12 @@ public class Response implements Serializable {
     public static final int TURN = 3;
     public static final int JUDGE = 4;
     public static final int SCORE = 5;
+    public static final int LOGOUT = 10;
 
     public static final int SUCCESS = 0;
     public static final int FAIL = 1;
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     private int responseType;
     private String userName;

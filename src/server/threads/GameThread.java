@@ -73,6 +73,12 @@ class GameThread extends Thread{
                 Action a = (Action) currentPlayer.getOis().readObject();
                 if (a != null) {
                     int type = a.getActionType();
+                    if (type == Action.LOGOUT) {
+                        Response r = new Response(Response.LOGOUT);
+                        broadcast(r);
+                        // TODO：游戏结束.
+                        break;
+                    }
                     if (type == Action.MOVE) {
                         Response r = new Response(Response.MOVE);
                         r.setMoveInfo(a.getCoor_x(), a.getCoor_y(), a.getInput());

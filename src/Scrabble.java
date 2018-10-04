@@ -1,9 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.io.*;
 import ultility.Action;
 import ultility.Response;
@@ -25,6 +22,8 @@ public class Scrabble {
     private ObjectInputStream in;
     private ObjectOutputStream out;
 
+    private Thread thread;
+
     public Scrabble(String username, ObjectInputStream in, ObjectOutputStream out) {
         this.username = username;
         this.in = in;
@@ -35,14 +34,19 @@ public class Scrabble {
     }
 
     private void BuildUpThread() {
-        Thread thread = new Thread() {
+        thread = new Thread() {
             public void run() {
-                try {
-                    while (true) {
+                while (true) {
+                    System.out.println("I m running!");
+                    try {
                         Response r = (Response) in.readObject();
                         if (r != null) {
                             // 读取server发来的信息并处理。
                             int type = r.getResponseType();
+                            if (type == Response.LOGOUT) {
+                                // TODO: 游戏结束
+                                break;
+                            }
                             switch (type) {
                                 case Response.TURN:
                                     if (r.getTurn().equals(username)) {
@@ -56,13 +60,12 @@ public class Scrabble {
                                             }
                                         doneButton.setEnabled(true);
                                         passButton.setEnabled(true);
-                                    }
-                                    else {
+                                    } else {
                                         turnLabel.setText(r.getTurn() + "'s Turn!");
                                     }
                                     break;
                                 case Response.JUDGE:
-                                    Object[] options ={"Agree", "Disagree"};
+                                    Object[] options = {"Agree", "Disagree"};
                                     String message = r.getUserName() + " wants to get score by " + r.getExpectWord() + ".";
                                     int rc = JOptionPane.showOptionDialog(window, message, "Option", JOptionPane.CANCEL_OPTION,
                                             JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
@@ -97,9 +100,10 @@ public class Scrabble {
                             }
                         }
                     }
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
+                    catch (Exception e1) {
+                        e1.printStackTrace();
+                        break;
+                    }
                 }
             }
         };
@@ -200,6 +204,7 @@ public class Scrabble {
             if (rc == 0) this.Pass();
         }
     }
+
     private void confirmPass() {
         if (x > -1 && y > -1) {
             // 让用户确定是否pass
@@ -237,8 +242,23 @@ public class Scrabble {
         this.window = new JFrame("Scrabble");
         window.setSize(800, 434);
         window.setLocation(200, 200);
-        window.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        window.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         window.setResizable(false);
+        window.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+                try {
+                    Action a = new Action(Action.LOGOUT);
+                    out.writeObject(a);
+                    out.flush();
+                    window.dispose();
+                }
+                catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
 
         JPanel panel = new JPanel();
         panel.setLayout(null);
