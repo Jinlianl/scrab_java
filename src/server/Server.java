@@ -1,11 +1,11 @@
 package server;
 import java.net.*;
 import java.util.ArrayList;
-
 import server.threads.*;
-
 import java.io.*;
-import ultility.*;
+import ultility.Player;
+import ultility.Action;
+import ultility.Response;
 
 public class Server{
     public static void main(String args[]) throws IOException {
