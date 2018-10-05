@@ -47,8 +47,9 @@ public class Scrabble {
                                 // TODO: 游戏结束
                                 Object[] options = {"OK"};
                                     String message = " All player pass in this turn, game ended";
-                                    JOptionPane.showOptionDialog(window, message, "Option", JOptionPane.CANCEL_OPTION,
+                                    JOptionPane.showOptionDialog(window, message, "Info", JOptionPane.CANCEL_OPTION,
                                             JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                                    window.dispose();
                                 break;
                             }
                             switch (type) {
