@@ -19,7 +19,6 @@ class GameThread extends Thread{
         int judgeTurn = (turn + 1) % players.size();
         while (judgeTurn != turn) {
             try {
-                //先判断是否该轮玩家offline
                 Player judgePlayer = players.get(judgeTurn);
                 judgePlayer.getOos().writeObject(r);
                 judgePlayer.getOos().flush();
@@ -84,13 +83,7 @@ class GameThread extends Thread{
                 passCount = 0;
             }
             try {
-                //该轮玩家全部pass,游戏结束
-                if(passCount == players.size()){
-                    System.out.println("logout!");
-                    Response r = new Response(Response.LOGOUT);
-                    broadcast(r);
-                    break;
-                }
+                
                 Player currentPlayer = players.get(turn);
                 //判断该玩家是否在线
                 if(!currentPlayer.getSocket().isConnected()||currentPlayer.getSocket().isClosed()){
@@ -125,7 +118,13 @@ class GameThread extends Thread{
                             Judge(judge);
                         }
                     }
-                   
+                   //该轮玩家全部pass,游戏结束
+                    if(passCount == players.size()){
+                        System.out.println("logout!");
+                        Response r = new Response(Response.LOGOUT);
+                        broadcast(r);
+                        break;
+                    }
                     nextTurn();
                 }
             }
