@@ -45,6 +45,10 @@ public class Scrabble {
                             int type = r.getResponseType();
                             if (type == Response.LOGOUT) {
                                 // TODO: 游戏结束
+                                Object[] options = {"OK"};
+                                    String message = " All player pass in this turn, game ended";
+                                    JOptionPane.showOptionDialog(window, message, "Option", JOptionPane.CANCEL_OPTION,
+                                            JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
                                 break;
                             }
                             switch (type) {
