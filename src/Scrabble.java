@@ -260,6 +260,7 @@ public class Scrabble {
                     Action a = new Action(Action.LOGOUT);
                     out.writeObject(a);
                     out.flush();
+                    window.setVisible(false);
                     window.dispose();
                 }
                 catch (Exception e1) {
