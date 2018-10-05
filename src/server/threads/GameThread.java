@@ -68,8 +68,29 @@ class GameThread extends Thread{
     }
 
     public void run() {
+        int count = 0;
+        int passCount = 0;
+        boolean resetTurn = true;
         while (true) {
+            // 判断是否结束一轮
+            if(count < players.size()){
+                count++;
+                resetTurn = false;
+            }else{
+                count = 0;
+                resetTurn = true;
+            }
+            if(resetTurn){
+                passCount = 0;
+            }
             try {
+                //该轮玩家全部pass,游戏结束
+                if(passCount == players.size()){
+                    System.out.println("logout!");
+                    Response r = new Response(Response.LOGOUT);
+                    broadcast(r);
+                    break;
+                }
                 Player currentPlayer = players.get(turn);
                 //判断该玩家是否在线
                 if(!currentPlayer.getSocket().isConnected()||currentPlayer.getSocket().isClosed()){
@@ -88,6 +109,11 @@ class GameThread extends Thread{
                         // TODO：游戏结束.
                         break;
                     }
+                    if(type == Action.PASS){
+                        passCount++;
+                        int remain = players.size() - passCount;
+                        System.out.println("this turn now has "+passCount+" pass, remains " + remain);
+                    }
                     if (type == Action.MOVE) {
                         Response r = new Response(Response.MOVE);
                         r.setMoveInfo(a.getCoor_x(), a.getCoor_y(), a.getInput());
@@ -99,6 +125,7 @@ class GameThread extends Thread{
                             Judge(judge);
                         }
                     }
+                   
                     nextTurn();
                 }
             }
