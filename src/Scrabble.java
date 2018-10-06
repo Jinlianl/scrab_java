@@ -24,10 +24,13 @@ public class Scrabble {
 
     private Thread thread;
 
-    public Scrabble(String username, ObjectInputStream in, ObjectOutputStream out) {
+    private Object lock;
+
+    public Scrabble(String username, ObjectInputStream in, ObjectOutputStream out, Object lock) {
         this.username = username;
         this.in = in;
         this.out = out;
+        this.lock = lock;
         this.playerNames.add(username);
         this.BuildUpGUI();
         this.BuildUpThread();
@@ -46,11 +49,14 @@ public class Scrabble {
                             if (type == Response.ENDGAME) {
                                 // TODO: 游戏结束
                                 if (window.isVisible()) {
-                                    Object[] options = {"OK"};
-                                    String message = " All player pass in this turn, game ended";
-                                    JOptionPane.showOptionDialog(window, message, "Info", JOptionPane.CANCEL_OPTION,
-                                            JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-                                    window.dispose();
+                                    synchronized (lock) {
+                                        Object[] options = {"OK"};
+                                        String message = " All player pass in this turn, game ended";
+                                        JOptionPane.showOptionDialog(window, message, "Info", JOptionPane.CANCEL_OPTION,
+                                                JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                                        window.dispose();
+                                        lock.notify();
+                                    }
                                 }
                                 break;
                             }
@@ -287,11 +293,14 @@ public class Scrabble {
             public void windowClosing(WindowEvent e) {
                 super.windowClosing(e);
                 try {
-                    Action a = new Action(Action.ENDGAME);
-                    out.writeObject(a);
-                    out.flush();
-                    window.setVisible(false);
-                    window.dispose();
+                    synchronized (lock) {
+                        Action a = new Action(Action.ENDGAME);
+                        out.writeObject(a);
+                        out.flush();
+                        window.setVisible(false);
+                        lock.notify();
+                        window.dispose();
+                    }
                 }
                 catch (Exception e1) {
                     e1.printStackTrace();

@@ -10,10 +10,12 @@ import ultility.Player;
 public class LoginThread extends Thread{
     private ArrayList<Player> players;
     private ArrayList<String> nameList;
+    private ArrayList<GameThread> gameThreadList;
     private ServerSocket s;
-    public LoginThread(ArrayList<Player> players, ArrayList<String> nameList, ServerSocket serverSocket){
-        this.players = players;
-        this.nameList = nameList;
+    public LoginThread(ServerSocket serverSocket){
+        this.players = new ArrayList<Player>();
+        this.nameList = new ArrayList<String>();
+        this.gameThreadList = new ArrayList<GameThread>();
         this.s = serverSocket;
     }
 
@@ -54,7 +56,7 @@ public class LoginThread extends Thread{
                         oos.writeObject(r);
                         oos.flush();
                         System.out.println( userName + " connect sucessful!");
-                        new HallThread(player).start();
+                        new HallThread(player, players, nameList, gameThreadList).start();
                     }
                 }
                 

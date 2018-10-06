@@ -14,6 +14,8 @@ public class Action implements Serializable{
     public static final int MOVE = 2;
     public static final int PASS = 3;
     public static final int JUDGE = 4;
+    public static final int STARTGAME = 7;
+    public static final int NEW = 8;
     public static final int ENDGAME = 9;
     public static final int LOGOUT = 10;
     private static final long serialVersionUID = 1L;
@@ -25,6 +27,7 @@ public class Action implements Serializable{
     private String input;
     private String expectWord;
     private boolean agree;
+    private int gameID;
 
 
     public Action(int type){
@@ -58,7 +61,10 @@ public class Action implements Serializable{
         this.agree = b;
     }
 
-    
+    public void setGameID(int gameID) {
+        this.gameID = gameID;
+    }
+
     /**
      * @return the actionType
      */
@@ -98,5 +104,9 @@ public class Action implements Serializable{
 
     public boolean isAgree() {
         return agree;
+    }
+
+    public int getGameID() {
+        return gameID;
     }
 }

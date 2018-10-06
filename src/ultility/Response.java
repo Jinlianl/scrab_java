@@ -9,6 +9,7 @@ public class Response implements Serializable {
     public static final int TURN = 3;
     public static final int JUDGE = 4;
     public static final int SCORE = 5;
+    public static final int STARTGAME = 7;
     public static final int ENDGAME = 9;
     public static final int LOGOUT = 10;
 
@@ -26,6 +27,7 @@ public class Response implements Serializable {
     private String message;
     private int status;
     private int score;
+    private int gameID;
 
     public Response (int type) {
         responseType = type;
@@ -36,9 +38,10 @@ public class Response implements Serializable {
         message = m;
     }
 
-    public void setJoinStatus(int s, String m) {
+    public void setJoinStatus(int s, String m, int g) {
         status = s;
         message = m;
+        gameID = g;
         // TODO: 游戏初始化其他信息，例如本场玩家等
     }
 
@@ -111,5 +114,9 @@ public class Response implements Serializable {
      */
     public String getExpectWord() {
         return expectWord;
+    }
+
+    public int getGameID() {
+        return gameID;
     }
 }

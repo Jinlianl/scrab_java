@@ -15,6 +15,10 @@ class GameThread extends Thread{
         players.add(player);
     }
 
+    public int getPlayersNum() {
+        return players.size();
+    }
+
     private void Judge(Response r) {
         int judgeTurn = (turn + 1) % players.size();
         while (judgeTurn != turn) {
