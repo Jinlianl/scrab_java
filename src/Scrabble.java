@@ -43,7 +43,7 @@ public class Scrabble {
                         if (r != null) {
                             // 读取server发来的信息并处理。
                             int type = r.getResponseType();
-                            if (type == Response.LOGOUT) {
+                            if (type == Response.ENDGAME) {
                                 // TODO: 游戏结束
                                 if (window.isVisible()) {
                                     Object[] options = {"OK"};
@@ -59,14 +59,7 @@ public class Scrabble {
                                     if (r.getTurn().equals(username)) {
                                         // 设定为自己的turn，可以操作了
                                         turnLabel.setText("Your Turn!");
-                                        for (int i = 0; i < 20; i++)
-                                            for (int j = 0; j < 20; j++) {
-                                                if (textFields[i][j].getText().length() == 0) {
-                                                    textFields[i][j].setEnabled(true);
-                                                }
-                                            }
-                                        doneButton.setEnabled(true);
-                                        passButton.setEnabled(true);
+                                        StartTurn();
                                     } else {
                                         turnLabel.setText(r.getTurn() + "'s Turn!");
                                     }
@@ -85,6 +78,8 @@ public class Scrabble {
                                     break;
                                 case Response.MOVE:
                                     textFields[r.getCoor_x()][r.getCoor_y()].setText(r.getInput());
+                                    textFields[r.getCoor_x()][r.getCoor_y()].setEnabled(false);
+                                    textFields[r.getCoor_x()][r.getCoor_y()].setBackground(Color.YELLOW);
                                     break;
                                 case Response.SCORE:
                                     String msg = r.getMessage().replace(username, "You");
@@ -115,6 +110,46 @@ public class Scrabble {
             }
         };
         thread.start();
+    }
+
+    private void StartTurn() {
+        x = -1;
+        y = -1;
+        doneButton.setEnabled(true);
+        passButton.setEnabled(true);
+        for (int i = 0; i < 20; i++)
+            for (int j = 0; j < 20; j++) {
+                if (textFields[i][j].getText().length() > 0) {
+                    if (i-1 >= 0 && textFields[i-1][j].getText().length() == 0) {
+                        textFields[i-1][j].setEnabled(true);
+                        textFields[i-1][j].setBackground(Color.CYAN);
+                    }
+                    if (j-1 >= 0 && textFields[i][j-1].getText().length() == 0) {
+                        textFields[i][j-1].setEnabled(true);
+                        textFields[i][j-1].setBackground(Color.CYAN);
+                    }
+                    if (i+1 < 20 && textFields[i+1][j].getText().length() == 0) {
+                        textFields[i+1][j].setEnabled(true);
+                        textFields[i+1][j].setBackground(Color.CYAN);
+                    }
+                    if (j+1 < 20 && textFields[i][j+1].getText().length() == 0) {
+                        textFields[i][j+1].setEnabled(true);
+                        textFields[i][j+1].setBackground(Color.CYAN);
+                    }
+                }
+            }
+    }
+
+    private void EndTurn() {
+        doneButton.setEnabled(false);
+        passButton.setEnabled(false);
+        for (int i = 0; i < 20; i++)
+            for (int j = 0; j < 20; j++) {
+                if (textFields[i][j].getText().length() == 0) {
+                    textFields[i][j].setEnabled(false);
+                    textFields[i][j].setBackground(Color.LIGHT_GRAY);
+                }
+            }
     }
 
     private String[] checkWords() {
@@ -157,12 +192,7 @@ public class Scrabble {
     }
 
     private void ChooseWord(String word) {
-        for (int i = 0; i < 20; i++)
-            for (int j = 0; j < 20; j++) {
-                textFields[i][j].setEnabled(false);
-            }
-        doneButton.setEnabled(false);
-        passButton.setEnabled(false);
+        EndTurn();
 
         try {
             Action a = new Action(Action.MOVE);
@@ -177,7 +207,7 @@ public class Scrabble {
 
     private void Done() {
         if (x > -1 && y > -1) {
-            textFields[x][y].setEnabled(false);
+            //textFields[x][y].setEnabled(false);
             String[] tokens = this.checkWords();
             if (tokens[0].length() > 1 && tokens[1].length() > 1) {
                 Object[] options ={tokens[0], tokens[1], "Do not submit"};
@@ -257,7 +287,7 @@ public class Scrabble {
             public void windowClosing(WindowEvent e) {
                 super.windowClosing(e);
                 try {
-                    Action a = new Action(Action.LOGOUT);
+                    Action a = new Action(Action.ENDGAME);
                     out.writeObject(a);
                     out.flush();
                     window.setVisible(false);

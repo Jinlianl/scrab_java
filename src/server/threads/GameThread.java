@@ -88,7 +88,7 @@ class GameThread extends Thread{
                 //判断该玩家是否在线
                 if(!currentPlayer.getSocket().isConnected()||currentPlayer.getSocket().isClosed()){
                     System.out.println(currentPlayer.getUserName() +" player if offline");
-                    Response r = new Response(Response.LOGOUT);
+                    Response r = new Response(Response.ENDGAME);
                     broadcast(r);
                     // TODO：游戏结束.
                     break;
@@ -96,8 +96,8 @@ class GameThread extends Thread{
                 Action a = (Action) currentPlayer.getOis().readObject();
                 if (a != null) {
                     int type = a.getActionType();
-                    if (type == Action.LOGOUT) {
-                        Response r = new Response(Response.LOGOUT);
+                    if (type == Action.ENDGAME) {
+                        Response r = new Response(Response.ENDGAME);
                         broadcast(r);
                         // TODO：游戏结束.
                         break;
@@ -120,8 +120,8 @@ class GameThread extends Thread{
                     }
                    //该轮玩家全部pass,游戏结束
                     if(passCount == players.size()){
-                        System.out.println("logout!");
-                        Response r = new Response(Response.LOGOUT);
+                        System.out.println("End Game!");
+                        Response r = new Response(Response.ENDGAME);
                         broadcast(r);
                         break;
                     }

@@ -9,6 +9,7 @@ public class Response implements Serializable {
     public static final int TURN = 3;
     public static final int JUDGE = 4;
     public static final int SCORE = 5;
+    public static final int ENDGAME = 9;
     public static final int LOGOUT = 10;
 
     public static final int SUCCESS = 0;

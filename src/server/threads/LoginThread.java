@@ -39,10 +39,10 @@ public class LoginThread extends Thread{
                     if (nameList.contains(userName)) {
                         // 返回客户端登录失败
                         Response r = new Response(Response.LOGIN);
-                        r.setLoginResponse(Response.FAIL, userName + "is already connected!");
+                        r.setLoginResponse(Response.FAIL, userName + " is already connected!");
                         oos.writeObject(r);
                         oos.flush();
-                        System.out.println( userName + "is already connected!");
+                        System.out.println( userName + " is already connected!");
                     }
                     else {
                         Player player = new Player(userName, socket, ois, oos);
@@ -50,10 +50,10 @@ public class LoginThread extends Thread{
                         nameList.add(userName);
                         // 返回客户端登录成功
                         Response r = new Response(Response.LOGIN);
-                        r.setLoginResponse(Response.SUCCESS, userName + "connect sucessful!");
+                        r.setLoginResponse(Response.SUCCESS, userName + " connect sucessful!");
                         oos.writeObject(r);
                         oos.flush();
-                        System.out.println( userName + "connect sucessful!");
+                        System.out.println( userName + " connect sucessful!");
                         new HallThread(player).start();
                     }
                 }
