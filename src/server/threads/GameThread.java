@@ -71,6 +71,7 @@ public class GameThread extends Thread{
             try {
                 players.get(i).getOos().writeObject(r);
                 players.get(i).getOos().flush();
+                System.out.println(players.get(i).getUserName());
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -88,6 +89,12 @@ public class GameThread extends Thread{
     public void run() {
         this.started = true;
         int passCount = 0;
+        // TODO: 更好的确认所有客户端都已经开启的方案，目前是等2秒默认大家都会开起来了
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         nextTurn();
         while (true) {
             try {

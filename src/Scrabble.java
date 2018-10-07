@@ -119,6 +119,17 @@ public class Scrabble {
         thread.start();
     }
 
+    private void Ready() {
+        try {
+            Action a = new Action(Action.READY);
+            out.writeObject(a);
+            out.flush();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void StartTurn() {
         boolean isFirstTrun = true;
         x = -1;
@@ -148,8 +159,8 @@ public class Scrabble {
                 }
             }
         if (isFirstTrun) {
-            for (int i = 0; i < 20; i++)
-                for (int j = 0; j < 20; j++) {
+            for (int i = 9; i < 11; i++)
+                for (int j = 9; j < 11; j++) {
                     textFields[i][j].setEnabled(true);
                     textFields[i][j].setBackground(Color.CYAN);
                 }
@@ -223,8 +234,8 @@ public class Scrabble {
 
     private void Done() {
         if (x > -1 && y > -1) {
-            //textFields[x][y].setEnabled(false);
             String[] tokens = this.checkWords();
+            // TODO: 由单选变成多选，相应的投票也需要改，可以用checkbox实现多选
             if (tokens[0].length() > 1 && tokens[1].length() > 1) {
                 Object[] options ={tokens[0], tokens[1], "Do not submit"};
                 String message = "Which word do you want to submit for judgement?";
