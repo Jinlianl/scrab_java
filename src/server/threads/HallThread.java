@@ -25,8 +25,8 @@ class HallThread extends Thread{
     }
 
     public void run() {
+        // TODO: 时不时发送已登录用户信息
         while (true) {
-            //System.out.println("hahahahahahahaha");
             try {
                 Action a = (Action) ois.readObject();
                 if (a != null) {
@@ -57,7 +57,7 @@ class HallThread extends Thread{
                             // 同步更新一个GameThread，添加player
                             int i = 0;
                             for (; i < gameThreadList.size(); i++)
-                                if (gameThreadList.get(i).getPlayersNum() < 4) {
+                                if (gameThreadList.get(i).getPlayersNum() < 4 && !gameThreadList.get(i).isStarted()) {
                                     synchronized (this.gameThreadList) {
                                         gameThreadList.get(i).addPlayers(player);
                                     }

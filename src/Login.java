@@ -70,8 +70,11 @@ public class Login {
                     out.writeObject(a);
                     out.flush();
 
+                    System.out.println(a.getActionType());
+
                     if (in == null) {
                         in = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
+                        System.out.println("new input stream");
                     }
                     Response r = (Response) in.readObject();
                     if (r != null) {

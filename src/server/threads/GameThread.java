@@ -7,9 +7,15 @@ import ultility.Action;
 import ultility.Response;
 import ultility.Player;
 
-class GameThread extends Thread{
+public class GameThread extends Thread{
     private ArrayList<Player> players = new ArrayList<Player>();
     private int turn = 0;
+    private boolean started = false;
+    // TODO: 计分系统
+
+    public boolean isStarted() {
+        return started;
+    }
 
     public void addPlayers(Player player) {
         players.add(player);
@@ -71,47 +77,36 @@ class GameThread extends Thread{
     }
 
     public void run() {
-        int count = 0;
+        this.started = true;
         int passCount = 0;
-        boolean resetTurn = true;
         while (true) {
-            // 判断是否结束一轮
-            if(count < players.size()){
-                count++;
-                resetTurn = false;
-            }else{
-                count = 0;
-                resetTurn = true;
-            }
-            if(resetTurn){
-                passCount = 0;
-            }
             try {
-                
                 Player currentPlayer = players.get(turn);
-                //判断该玩家是否在线
-                if(!currentPlayer.getSocket().isConnected()||currentPlayer.getSocket().isClosed()){
-                    System.out.println(currentPlayer.getUserName() +" player if offline");
-                    Response r = new Response(Response.ENDGAME);
-                    broadcast(r);
-                    // TODO：游戏结束.
-                    break;
-                }
                 Action a = (Action) currentPlayer.getOis().readObject();
                 if (a != null) {
                     int type = a.getActionType();
                     if (type == Action.ENDGAME) {
                         Response r = new Response(Response.ENDGAME);
+                        // TODO: 显示胜利玩家
+                        r.setEndGameMessage("One player has logged out. Game ends.");
                         broadcast(r);
-                        // TODO：游戏结束.
                         break;
                     }
                     if(type == Action.PASS){
                         passCount++;
-                        int remain = players.size() - passCount;
-                        System.out.println("this turn now has "+passCount+" pass, remains " + remain);
+                        System.out.println("this turn now has "+passCount+" pass, remains " + (players.size()-passCount));
+                        //该轮玩家全部pass,游戏结束
+                        if(passCount == players.size()){
+                            System.out.println("End Game!");
+                            Response r = new Response(Response.ENDGAME);
+                            // TODO: 显示胜利玩家
+                            r.setEndGameMessage(" All players passed. Game ends");
+                            broadcast(r);
+                            break;
+                        }
                     }
                     if (type == Action.MOVE) {
+                        passCount = 0;
                         Response r = new Response(Response.MOVE);
                         r.setMoveInfo(a.getCoor_x(), a.getCoor_y(), a.getInput());
                         broadcast(r);
@@ -121,13 +116,6 @@ class GameThread extends Thread{
                             judge.setJudgeInfo(a.getExpectWord(), currentPlayer.getUserName());
                             Judge(judge);
                         }
-                    }
-                   //该轮玩家全部pass,游戏结束
-                    if(passCount == players.size()){
-                        System.out.println("End Game!");
-                        Response r = new Response(Response.ENDGAME);
-                        broadcast(r);
-                        break;
                     }
                     nextTurn();
                 }

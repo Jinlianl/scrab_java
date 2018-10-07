@@ -47,12 +47,11 @@ public class Scrabble {
                             // 读取server发来的信息并处理。
                             int type = r.getResponseType();
                             if (type == Response.ENDGAME) {
-                                // TODO: 游戏结束
+                                // TODO: 游戏结束显示胜利玩家
                                 if (window.isVisible()) {
                                     synchronized (lock) {
                                         Object[] options = {"OK"};
-                                        String message = " All player pass in this turn, game ended";
-                                        JOptionPane.showOptionDialog(window, message, "Info", JOptionPane.CANCEL_OPTION,
+                                        JOptionPane.showOptionDialog(window, r.getMessage(), "Info", JOptionPane.CANCEL_OPTION,
                                                 JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
                                         window.dispose();
                                         lock.notify();

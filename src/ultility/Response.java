@@ -66,6 +66,10 @@ public class Response implements Serializable {
         this.expectWord = word;
     }
 
+    public void setEndGameMessage(String message) {
+        this.message = message;
+    }
+
     public int getResponseType() {
         return responseType;
     }

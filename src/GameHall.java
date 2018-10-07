@@ -5,12 +5,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
+
 import ultility.Action;
 import ultility.Response;
 
 public class GameHall {
     private String username;
     private JFrame window;
+    private JFrame waitNinviteWindow;
     private JTextArea userList;
     private ObjectInputStream in;
     private ObjectOutputStream out;
@@ -51,6 +53,7 @@ public class GameHall {
                                 case Response.STARTGAME:
                                     // 开始新游戏
                                     synchronized (lock) {
+                                        waitNinviteWindow.setVisible(false);
                                         new Scrabble(username, in, out, lock);
                                         System.gc();
                                         lock.wait();
@@ -72,16 +75,9 @@ public class GameHall {
     }
 
     private void OpenWaitingWindow() {
-        // TODO: 打开等待开始界面
-        try {
-            Action a = new Action(Action.STARTGAME);
-            a.setGameID(gameID);
-            out.writeObject(a);
-            out.flush();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+        // TODO: 打开等待开始界面，加入邀请功能
+        waitNinviteWindow.setVisible(true);
+
     }
 
     private void Logout() {
@@ -97,6 +93,7 @@ public class GameHall {
     }
 
     private void BuildUpGUI() {
+        // Build up Game Hall
         JFrame.setDefaultLookAndFeelDecorated(true);
         this.window = new JFrame("Game Hall");
         window.setSize(300, 300);
@@ -139,20 +136,6 @@ public class GameHall {
                     a.setJoinGameInfo(username);
                     out.writeObject(a);
                     out.flush();
-//                    Response r = (Response) in.readObject();
-//                    System.out.println(r);
-//                    if (r != null) {
-//                        // 处理server回应
-//                        if (r.getStatus() == Response.SUCCESS) {
-//                            new Scrabble(username, in, out);
-//                            System.gc();
-//                        }
-//                        else {
-//                            Object[] options ={"OK"};
-//                            JOptionPane.showOptionDialog(window, r.getMessage(), "Warning", JOptionPane.CANCEL_OPTION,
-//                                    JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-//                        }
-//                    }
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
@@ -171,7 +154,6 @@ public class GameHall {
                     a.setJoinGameInfo(username);
                     out.writeObject(a);
                     out.flush();
-                    //new Scrabble(username, in, out);
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
@@ -191,5 +173,37 @@ public class GameHall {
 
         window.setContentPane(panel);
         window.setVisible(true);
+
+        //Build up waiting & invitation window
+        this.waitNinviteWindow = new JFrame("Waiting");
+        waitNinviteWindow.setUndecorated(true);
+        waitNinviteWindow.setSize(500, 200);
+        waitNinviteWindow.setLocation(420, 200);
+        waitNinviteWindow.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        waitNinviteWindow.setResizable(false);
+
+        JPanel wpanel = new JPanel();
+        wpanel.setLayout(null);
+        wpanel.setBounds(0,0,500,200);
+
+        JButton start = new JButton("Start");
+        start.setBounds(20, 140, 100,40);
+        start.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    Action a = new Action(Action.STARTGAME);
+                    a.setGameID(gameID);
+                    out.writeObject(a);
+                    out.flush();
+                }
+                catch (Exception e2) {
+                    e2.printStackTrace();
+                }
+            }
+        });
+        wpanel.add(start);
+
+        waitNinviteWindow.setContentPane(wpanel);
     }
 }

@@ -11,33 +11,31 @@ public class LoginThread extends Thread{
     private ArrayList<Player> players;
     private ArrayList<String> nameList;
     private ArrayList<GameThread> gameThreadList;
-    private ServerSocket s;
-    public LoginThread(ServerSocket serverSocket){
-        this.players = new ArrayList<Player>();
-        this.nameList = new ArrayList<String>();
-        this.gameThreadList = new ArrayList<GameThread>();
-        this.s = serverSocket;
+    private Socket socket;
+    public LoginThread(Socket socket, ArrayList<Player> players, ArrayList<String> nameList, ArrayList<GameThread> gameThreadList){
+        this.players = players;
+        this.nameList = nameList;
+        this.gameThreadList = gameThreadList;
+        this.socket = socket;
     }
 
     public void run(){
-        InputStream clientInput;
-        ObjectInputStream ois;
-        ObjectOutputStream oos;
+        ObjectInputStream ois = null;
+        ObjectOutputStream oos = null;
         while(true){
-            System.out.println("waiting for connection ...");
             try {
-                // TODO: 用户退出登录之后移除信息，发一个logout包？
-                Socket socket = s.accept(); // Wait and accept a connection
-                System.out.println("new connection");
-                clientInput = socket.getInputStream();
-                //get login info from client
-                ois = new ObjectInputStream(new BufferedInputStream(clientInput));
+                // 用户退出登录之后移除信息，发一个logout包？
+                if (ois == null) {
+                    ois = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
+                }
                 Object obj = ois.readObject();
                 System.out.println(obj.getClass());
-                if( obj.getClass() == Action.class){
+                if(obj.getClass() == Action.class){
                     Action action = (Action)obj;
                     String userName = action.getUserName();
-                    oos = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+                    if (oos == null) {
+                        oos = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+                    }
                     if (nameList.contains(userName)) {
                         // 返回客户端登录失败
                         Response r = new Response(Response.LOGIN);
@@ -48,8 +46,12 @@ public class LoginThread extends Thread{
                     }
                     else {
                         Player player = new Player(userName, socket, ois, oos);
-                        players.add(player);
-                        nameList.add(userName);
+                        synchronized (players) {
+                            players.add(player);
+                        }
+                        synchronized (nameList) {
+                            nameList.add(userName);
+                        }
                         // 返回客户端登录成功
                         Response r = new Response(Response.LOGIN);
                         r.setLoginResponse(Response.SUCCESS, userName + " connect sucessful!");
@@ -57,6 +59,7 @@ public class LoginThread extends Thread{
                         oos.flush();
                         System.out.println( userName + " connect sucessful!");
                         new HallThread(player, players, nameList, gameThreadList).start();
+                        break;
                     }
                 }
                 
