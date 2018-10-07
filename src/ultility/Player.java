@@ -3,12 +3,14 @@ package ultility;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import server.threads.HallThread;
 
 public class Player{
     String userName;
     Socket socket;
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
+    private HallThread hallThread;
     
     public Player(String userName, Socket socket, ObjectInputStream in, ObjectOutputStream out){
         this.userName = userName;
@@ -16,6 +18,11 @@ public class Player{
         this.oos = out;
         this.ois = in;
     }
+
+    public void setHallThread(HallThread hallThread) {
+        this.hallThread = hallThread;
+    }
+
     /**
      * @return the userName
      */
@@ -35,5 +42,9 @@ public class Player{
 
     public ObjectOutputStream getOos() {
         return oos;
+    }
+
+    public HallThread getHallThread() {
+        return hallThread;
     }
 }

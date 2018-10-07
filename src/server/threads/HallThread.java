@@ -7,13 +7,14 @@ import ultility.Action;
 import ultility.Response;
 import ultility.Player;
 
-class HallThread extends Thread{
+public class HallThread extends Thread{
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
     private Player player;
     private ArrayList<Player> players;
     private ArrayList<String> nameList;
     private ArrayList<GameThread> gameThreadList;
+    private Object lock;
 
     public HallThread(Player self, ArrayList<Player> p, ArrayList<String> n, ArrayList<GameThread> g) {
         player = self;
@@ -22,6 +23,23 @@ class HallThread extends Thread{
         gameThreadList = g;
         oos = player.getOos();
         ois = player.getOis();
+        player.setHallThread(this);
+    }
+
+    public void setLock(Object lock) {
+        this.lock = lock;
+    }
+
+    public void LockWait() {
+        synchronized (this.lock) {
+            try {
+                System.out.println("I am locked");
+                this.lock.wait();
+            }
+            catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void run() {
@@ -48,6 +66,7 @@ class HallThread extends Thread{
                             synchronized (this.gameThreadList) {
                                 this.gameThreadList.add(t);
                             }
+                            setLock(t.getLock());
                             Response r1 = new Response(Response.JOIN);
                             r1.setJoinStatus(Response.SUCCESS, "Waiting for start.", this.gameThreadList.size()-1);
                             oos.writeObject(r1);
@@ -61,6 +80,7 @@ class HallThread extends Thread{
                                     synchronized (this.gameThreadList) {
                                         gameThreadList.get(i).addPlayers(player);
                                     }
+                                    setLock(gameThreadList.get(i).getLock());
                                     break;
                                 }
                             Response r2 = new Response(Response.JOIN);
@@ -74,12 +94,22 @@ class HallThread extends Thread{
                             oos.flush();
                             break;
                         case Action.STARTGAME:
+                            // 只允许start new game的人start game
                             Response r3 = new Response(Response.STARTGAME);
-                            oos.writeObject(r3);
-                            oos.flush();
+                            for (int j = this.gameThreadList.get(a.getGameID()).getPlayersNum()-1; j >= 0; j--) {
+                                this.gameThreadList.get(a.getGameID()).getPlayers().get(j).getOos().writeObject(r3);
+                                this.gameThreadList.get(a.getGameID()).getPlayers().get(j).getOos().flush();
+                            }
+
                             this.gameThreadList.get(a.getGameID()).start();
-                            this.gameThreadList.get(a.getGameID()).join();
+                            //LockWait();
                             break;
+                        case Action.STARTED:
+                            System.out.println("GAME STARTED " + player.getUserName());
+                            Response r4 = new Response(Response.STARTED);
+                            oos.writeObject(r4);
+                            oos.flush();
+                            LockWait();
                         default:
                             break;
                     }

@@ -9,12 +9,17 @@ import ultility.Player;
 
 public class GameThread extends Thread{
     private ArrayList<Player> players = new ArrayList<Player>();
-    private int turn = 0;
+    private int turn = -1;
     private boolean started = false;
+    private Object lock = new Object();
     // TODO: 计分系统
 
     public boolean isStarted() {
         return started;
+    }
+
+    public Object getLock() {
+        return this.lock;
     }
 
     public void addPlayers(Player player) {
@@ -23,6 +28,10 @@ public class GameThread extends Thread{
 
     public int getPlayersNum() {
         return players.size();
+    }
+
+    public ArrayList<Player> getPlayers() {
+        return players;
     }
 
     private void Judge(Response r) {
@@ -79,6 +88,7 @@ public class GameThread extends Thread{
     public void run() {
         this.started = true;
         int passCount = 0;
+        nextTurn();
         while (true) {
             try {
                 Player currentPlayer = players.get(turn);
@@ -90,6 +100,9 @@ public class GameThread extends Thread{
                         // TODO: 显示胜利玩家
                         r.setEndGameMessage("One player has logged out. Game ends.");
                         broadcast(r);
+                        synchronized (this.lock) {
+                            this.lock.notifyAll();
+                        }
                         break;
                     }
                     if(type == Action.PASS){
@@ -102,6 +115,9 @@ public class GameThread extends Thread{
                             // TODO: 显示胜利玩家
                             r.setEndGameMessage(" All players passed. Game ends");
                             broadcast(r);
+                            synchronized (this.lock) {
+                                this.lock.notifyAll();
+                            }
                             break;
                         }
                     }
@@ -122,6 +138,9 @@ public class GameThread extends Thread{
             }
             catch (Exception e) {
                 e.printStackTrace();
+                synchronized (this.lock) {
+                    this.lock.notifyAll();
+                }
                 break;
             }
         }

@@ -9,6 +9,7 @@ public class Response implements Serializable {
     public static final int TURN = 3;
     public static final int JUDGE = 4;
     public static final int SCORE = 5;
+    public static final int STARTED = 6;
     public static final int STARTGAME = 7;
     public static final int ENDGAME = 9;
     public static final int LOGOUT = 10;
@@ -42,7 +43,7 @@ public class Response implements Serializable {
         status = s;
         message = m;
         gameID = g;
-        // TODO: 游戏初始化其他信息，例如本场玩家等
+
     }
 
     public void setScoreInfo(int s, String m, String user) {
@@ -68,6 +69,10 @@ public class Response implements Serializable {
 
     public void setEndGameMessage(String message) {
         this.message = message;
+    }
+
+    public void setStartGameInfo() {
+
     }
 
     public int getResponseType() {

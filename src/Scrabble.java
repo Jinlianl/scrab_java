@@ -39,6 +39,7 @@ public class Scrabble {
     private void BuildUpThread() {
         thread = new Thread() {
             public void run() {
+                EndTurn();
                 while (true) {
                     System.out.println("I m running!");
                     try {
@@ -61,6 +62,7 @@ public class Scrabble {
                             }
                             switch (type) {
                                 case Response.TURN:
+                                    System.out.println("RECEIVE TURN");
                                     if (r.getTurn().equals(username)) {
                                         // 设定为自己的turn，可以操作了
                                         turnLabel.setText("Your Turn!");
@@ -118,6 +120,7 @@ public class Scrabble {
     }
 
     private void StartTurn() {
+        boolean isFirstTrun = true;
         x = -1;
         y = -1;
         doneButton.setEnabled(true);
@@ -125,6 +128,7 @@ public class Scrabble {
         for (int i = 0; i < 20; i++)
             for (int j = 0; j < 20; j++) {
                 if (textFields[i][j].getText().length() > 0) {
+                    isFirstTrun = false;
                     if (i-1 >= 0 && textFields[i-1][j].getText().length() == 0) {
                         textFields[i-1][j].setEnabled(true);
                         textFields[i-1][j].setBackground(Color.CYAN);
@@ -143,6 +147,13 @@ public class Scrabble {
                     }
                 }
             }
+        if (isFirstTrun) {
+            for (int i = 0; i < 20; i++)
+                for (int j = 0; j < 20; j++) {
+                    textFields[i][j].setEnabled(true);
+                    textFields[i][j].setBackground(Color.CYAN);
+                }
+        }
     }
 
     private void EndTurn() {

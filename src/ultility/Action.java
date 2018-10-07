@@ -14,6 +14,7 @@ public class Action implements Serializable{
     public static final int MOVE = 2;
     public static final int PASS = 3;
     public static final int JUDGE = 4;
+    public static final int STARTED = 6;
     public static final int STARTGAME = 7;
     public static final int NEW = 8;
     public static final int ENDGAME = 9;

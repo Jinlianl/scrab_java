@@ -50,7 +50,7 @@ public class GameHall {
                                                 JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
                                     }
                                     break;
-                                case Response.STARTGAME:
+                                case Response.STARTED:
                                     // 开始新游戏
                                     synchronized (lock) {
                                         waitNinviteWindow.setVisible(false);
@@ -59,6 +59,10 @@ public class GameHall {
                                         lock.wait();
                                     }
                                     break;
+                                case Response.STARTGAME:
+                                    Action a = new Action(Action.STARTED);
+                                    out.writeObject(a);
+                                    out.flush();
                                 default:
                                     break;
                             }
@@ -174,9 +178,9 @@ public class GameHall {
         window.setContentPane(panel);
         window.setVisible(true);
 
-        //Build up waiting & invitation window
+        // TODO:Build up waiting & invitation window
         this.waitNinviteWindow = new JFrame("Waiting");
-        waitNinviteWindow.setUndecorated(true);
+        //waitNinviteWindow.setUndecorated(true);
         waitNinviteWindow.setSize(500, 200);
         waitNinviteWindow.setLocation(420, 200);
         waitNinviteWindow.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -187,7 +191,7 @@ public class GameHall {
         wpanel.setBounds(0,0,500,200);
 
         JButton start = new JButton("Start");
-        start.setBounds(20, 140, 100,40);
+        start.setBounds(20, 120, 100,40);
         start.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
