@@ -1,15 +1,11 @@
 package server.threads;
-import java.net.*;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.io.*;
 
-import ultility.Action;
 import ultility.Response;
-import ultility.Player;
 
 public class ListThread extends Thread{
     private ArrayList<String> nameList = new ArrayList<String>();
-    private Object lock = new Object();
     private ObjectOutputStream oos;
     // TODO: 计分系统
 
@@ -17,15 +13,6 @@ public class ListThread extends Thread{
         oos = o;
         nameList = list;
     }
-
-    public int getPlayersNum() {
-        return nameList.size();
-    }
-
-    public ArrayList<String> getPlayerList() {
-        return nameList;
-    }
-
 
     public void run() {
         while (true) {
@@ -42,9 +29,6 @@ public class ListThread extends Thread{
             }
             catch (Exception e) {
                 e.printStackTrace();
-                synchronized (this.lock) {
-                    this.lock.notifyAll();
-                }
                 break;
             }
         }
