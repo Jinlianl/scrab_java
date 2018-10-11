@@ -18,6 +18,7 @@ public class GameHall {
     private ObjectOutputStream out;
     private int gameID = -1;
     private Object lock = new Object();
+    private String[] playerNames; //the online player name list
 
     public GameHall(String username, ObjectInputStream in, ObjectOutputStream out) {
         this.username = username;
@@ -64,7 +65,12 @@ public class GameHall {
                                     out.writeObject(a);
                                     out.flush();
                                 case Response.PLAYERLIST:
-                                    System.out.print(r.getPlayerList());
+                                    String listText = r.getPlayerList();
+                                    playerNames = listText.split("\n");
+                                    // for(String str:playerNames){
+                                    //     System.out.println("user: "+str);
+                                    // }
+                                    userList.setText(listText);
                                 default:
                                     break;
                             }
