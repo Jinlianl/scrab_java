@@ -61,6 +61,9 @@ public class HallThread extends Thread{
                     if (type == Action.LOGOUT) {
                         synchronized (this.nameList) {
                             this.nameList.remove(player.getUserName());
+                            // for(String str:this.nameList){
+                            //     System.out.println("current user:"+ str);
+                            // }
                         }
                         synchronized (this.players) {
                             this.players.remove(player);

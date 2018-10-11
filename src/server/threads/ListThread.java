@@ -25,7 +25,7 @@ public class ListThread extends Thread{
                 r.setPlayerList(list);
                 oos.writeObject(r);
                 oos.flush();
-                Thread.sleep(5000);
+                Thread.sleep(3000);
             }
             catch (Exception e) {
                 e.printStackTrace();
