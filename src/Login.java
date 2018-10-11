@@ -17,6 +17,9 @@ public class Login {
     private ObjectInputStream in;
     private ObjectOutputStream out;
 
+    /**
+     * @wbp.parser.entryPoint
+     */
     public Login(String[] config) {
         this.host = config[0];
         this.port = Integer.parseInt(config[1]);

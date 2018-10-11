@@ -63,6 +63,8 @@ public class GameHall {
                                     Action a = new Action(Action.STARTED);
                                     out.writeObject(a);
                                     out.flush();
+                                case Response.PLAYERLIST:
+                                    System.out.print(r.getPlayerList());
                                 default:
                                     break;
                             }
@@ -184,7 +186,7 @@ public class GameHall {
         waitNinviteWindow.setSize(500, 200);
         waitNinviteWindow.setLocation(420, 200);
         waitNinviteWindow.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        waitNinviteWindow.setResizable(false);
+        waitNinviteWindow.setResizable(true);
 
         JPanel wpanel = new JPanel();
         wpanel.setLayout(null);

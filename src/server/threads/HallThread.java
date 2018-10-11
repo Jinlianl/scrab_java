@@ -14,6 +14,7 @@ public class HallThread extends Thread{
     private ArrayList<Player> players;
     private ArrayList<String> nameList;
     private ArrayList<GameThread> gameThreadList;
+    private Thread playerListThread;
     private Object lock;
 
     public HallThread(Player self, ArrayList<Player> p, ArrayList<String> n, ArrayList<GameThread> g) {
@@ -24,6 +25,8 @@ public class HallThread extends Thread{
         oos = player.getOos();
         ois = player.getOis();
         player.setHallThread(this);
+        playerListThread = new ListThread(oos, nameList);
+
     }
 
     public void setLock(Object lock) {
@@ -44,6 +47,11 @@ public class HallThread extends Thread{
 
     public void run() {
         // TODO: 时不时发送已登录用户信息
+        try {
+            playerListThread.start();
+        } catch (Exception e) {
+            //TODO: handle exception
+        }
         while (true) {
             try {
                 Action a = (Action) ois.readObject();
