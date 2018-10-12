@@ -83,6 +83,17 @@ public class HallThread extends Thread{
                             oos.writeObject(r1);
                             oos.flush();
                             break;
+                        case Action.INVITE:
+                            String inviteId = a.getInvitedID();
+                            for(Player p:players){
+                                if(p.getUserName().equals(inviteId)){
+                                    Response r = new Response(Response.INVITE);
+                                    r.setInviteFrom(player.getUserName());
+                                    p.getOos().writeObject(r);
+                                    p.getOos().flush();
+                                }
+                            }
+                            break;
                         case Action.JOIN:
                             // 同步更新一个GameThread，添加player
                             int i = 0;

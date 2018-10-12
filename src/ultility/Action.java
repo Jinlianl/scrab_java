@@ -20,6 +20,7 @@ public class Action implements Serializable{
     public static final int NEW = 8;
     public static final int ENDGAME = 9;
     public static final int LOGOUT = 10;
+    public static final int INVITE = 11;
     private static final long serialVersionUID = 1L;
     
     private int actionType;
@@ -30,6 +31,7 @@ public class Action implements Serializable{
     private String expectWord;
     private boolean agree;
     private int gameID;
+    private String invitedID;
 
 
     public Action(int type){
@@ -47,6 +49,10 @@ public class Action implements Serializable{
      */
     public void setJoinGameInfo(String userName) {
         this.userName = userName;
+    }
+
+    public void setInviteID(String id) {
+        this.invitedID = id;
     }
 
     /**
@@ -78,6 +84,13 @@ public class Action implements Serializable{
      */
     public String getUserName() {
         return userName;
+    }
+
+    /**
+     * @return the invitedID
+     */
+    public String getInvitedID() {
+        return invitedID;
     }
     /**
      * @return the coor_x

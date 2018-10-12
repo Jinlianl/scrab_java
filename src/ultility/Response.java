@@ -14,6 +14,7 @@ public class Response implements Serializable {
     public static final int PLAYERLIST = 8;
     public static final int ENDGAME = 9;
     public static final int LOGOUT = 10;
+    public static final int INVITE = 11;
     
 
     public static final int SUCCESS = 0;
@@ -32,6 +33,7 @@ public class Response implements Serializable {
     private int score;
     private int gameID;
     private String playerList;
+    private String inviteFrom;
 
     public Response (int type) {
         responseType = type;
@@ -44,6 +46,10 @@ public class Response implements Serializable {
 
     public void setPlayerList(String p){
         playerList = p;
+    }
+    
+    public void setInviteFrom(String iv) {
+        inviteFrom = iv;
     }
 
     public void setJoinStatus(int s, String m, int g) {
@@ -100,6 +106,10 @@ public class Response implements Serializable {
 
     public String getPlayerList(){
         return playerList;
+    }
+
+    public String getInviteFrom() {
+        return inviteFrom;
     }
 
     public String getTurn() {
