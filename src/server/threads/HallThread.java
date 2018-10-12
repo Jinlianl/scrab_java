@@ -57,7 +57,7 @@ public class HallThread extends Thread{
                 Action a = (Action) ois.readObject();
                 if (a != null) {
                     int type = a.getActionType();
-                    //System.out.println(type);
+                    //System.out.println("server code:"+type);                    
                     if (type == Action.LOGOUT) {
                         synchronized (this.nameList) {
                             this.nameList.remove(player.getUserName());
