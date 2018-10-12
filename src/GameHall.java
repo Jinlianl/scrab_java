@@ -64,6 +64,7 @@ public class GameHall {
                                     Action a = new Action(Action.STARTED);
                                     out.writeObject(a);
                                     out.flush();
+                                    break;
                                 case Response.PLAYERLIST:
                                     String listText = r.getPlayerList();
                                     playerNames = listText.split("\n");
@@ -71,6 +72,7 @@ public class GameHall {
                                     //     System.out.println("user: "+str);
                                     // }
                                     userList.setText(listText);
+                                    break;
                                 default:
                                     break;
                             }
