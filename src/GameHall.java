@@ -79,9 +79,11 @@ public class GameHall {
                                     joinAct.setJoinGameInfo(username);
                                     out.writeObject(joinAct);
                                     out.flush();
-
+                                }
+                                break;
+                            default:
+                                break;
                             }
-
                         }
                     }
                 } catch (Exception e) {
