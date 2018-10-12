@@ -13,7 +13,6 @@ public class GameHall {
     private String username;
     private JFrame window;
     private JFrame waitNinviteWindow;
-    private JFrame inviteWindow;
     private JTextArea userList;
     private ObjectInputStream in;
     private ObjectOutputStream out;
@@ -70,9 +69,6 @@ public class GameHall {
                             case Response.PLAYERLIST:
                                 String listText = r.getPlayerList();
                                 playerNames = listText.split("\n");
-                                // for(String str:playerNames){
-                                // System.out.println("user: "+str);
-                                // }
                                 userList.setText(listText);
                                 break;
                             case Response.INVITE:
@@ -104,7 +100,7 @@ public class GameHall {
     private boolean AcceptInvitation(String fromID){
         // TODO: 判断是否同意邀请
         String[] option = {"Reject","Agree"};
-        String msg = fromID + "invite you to game";
+        String msg = "Player "+fromID + " invite you to game";
         int selected = JOptionPane.showOptionDialog(window, msg, "Info", JOptionPane.CANCEL_OPTION,
                                             JOptionPane.QUESTION_MESSAGE, null, option, option[0]);
         if(selected == 1){
