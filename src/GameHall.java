@@ -184,7 +184,8 @@ public class GameHall {
         panel.add(logout);
 
         window.setContentPane(panel);
-        window.setVisible(true);
+        
+        
 
         // TODO:Build up waiting & invitation window
         this.waitNinviteWindow = new JFrame("Waiting");
@@ -196,26 +197,44 @@ public class GameHall {
 
         JPanel wpanel = new JPanel();
         wpanel.setLayout(null);
-        wpanel.setBounds(0,0,500,200);
-
-        JButton start = new JButton("Start");
-        start.setBounds(20, 120, 100,40);
-        start.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    Action a = new Action(Action.STARTGAME);
-                    a.setGameID(gameID);
-                    out.writeObject(a);
-                    out.flush();
-                }
-                catch (Exception e2) {
-                    e2.printStackTrace();
-                }
-            }
-        });
-        wpanel.add(start);
-
+        wpanel.setBounds(0,0,515,223);
+//        panel.add(wpanel);
+        
+                JButton start = new JButton("Start");
+                start.setBounds(202, 130, 100, 40);
+                wpanel.add(start);
+                
+                JButton invite = new JButton("Invite");
+                invite.setBounds(67, 130, 119, 40);
+                wpanel.add(invite);
+                
+                DefaultListModel<String> model = new DefaultListModel<>();
+                JList list = new JList(model);
+                list.setBounds(67, 6, 125, 112);
+                
+               
+                wpanel.add(list);        
+                
+                JScrollPane scrollPane = new JScrollPane();
+                scrollPane.setBounds(209, 6, 93, 112);
+                wpanel.add(scrollPane);
+                
+                
+                start.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        try {
+                            Action a = new Action(Action.STARTGAME);
+                            a.setGameID(gameID);
+                            out.writeObject(a);
+                            out.flush();
+                        }
+                        catch (Exception e2) {
+                            e2.printStackTrace();
+                        }
+                    }
+                });
+        window.setVisible(true);
         waitNinviteWindow.setContentPane(wpanel);
     }
 }
