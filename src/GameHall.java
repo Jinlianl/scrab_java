@@ -19,6 +19,7 @@ public class GameHall {
     private int gameID = -1;
     private Object lock = new Object();
     private String[] playerNames; //the online player name list
+    private JList<String> inviteList;
 
     public GameHall(String username, ObjectInputStream in, ObjectOutputStream out) {
         this.username = username;
@@ -90,6 +91,13 @@ public class GameHall {
 
     private void OpenWaitingWindow() {
         // TODO: 打开等待开始界面，加入邀请功能
+    	if(this.playerNames.length>0){
+//    		DefaultListModel<String> model = new DefaultListModel<>();
+//            for(String name : this.playerNames){
+//                model.addElement(name);
+//            }
+            this.inviteList.setListData(playerNames);;
+    	}
         waitNinviteWindow.setVisible(true);
 
     }
@@ -210,12 +218,11 @@ public class GameHall {
                 invite.setBounds(67, 130, 119, 40);
                 wpanel.add(invite);
                 
-                DefaultListModel<String> model = new DefaultListModel<>();
-                JList list = new JList(model);
-                list.setBounds(67, 6, 125, 112);
+                inviteList = new JList<>();
+                inviteList.setBounds(67, 6, 125, 112);
                 
                
-                wpanel.add(list);        
+                wpanel.add(inviteList);        
                 
                 JScrollPane scrollPane = new JScrollPane();
                 scrollPane.setBounds(209, 6, 93, 112);

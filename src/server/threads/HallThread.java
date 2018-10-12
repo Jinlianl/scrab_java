@@ -25,7 +25,7 @@ public class HallThread extends Thread{
         oos = player.getOos();
         ois = player.getOis();
         player.setHallThread(this);
-        playerListThread = new ListThread(oos, nameList);
+        playerListThread = new ListThread(oos, nameList, player.getUserName());
 
     }
 
