@@ -25,7 +25,7 @@ public class HallThread extends Thread{
         oos = player.getOos();
         ois = player.getOis();
         player.setHallThread(this);
-        playerListThread = new ListThread(oos, nameList);
+        playerListThread = new ListThread(oos, nameList, player.getUserName());
 
     }
 
@@ -57,7 +57,7 @@ public class HallThread extends Thread{
                 Action a = (Action) ois.readObject();
                 if (a != null) {
                     int type = a.getActionType();
-                    //System.out.println(type);
+                    //System.out.println("server code:"+type);                    
                     if (type == Action.LOGOUT) {
                         synchronized (this.nameList) {
                             this.nameList.remove(player.getUserName());
@@ -82,6 +82,17 @@ public class HallThread extends Thread{
                             r1.setJoinStatus(Response.SUCCESS, "Waiting for start.", this.gameThreadList.size()-1);
                             oos.writeObject(r1);
                             oos.flush();
+                            break;
+                        case Action.INVITE:
+                            String inviteId = a.getInvitedID();
+                            for(Player p:players){
+                                if(p.getUserName().equals(inviteId)){
+                                    Response r = new Response(Response.INVITE);
+                                    r.setInviteFrom(player.getUserName());
+                                    p.getOos().writeObject(r);
+                                    p.getOos().flush();
+                                }
+                            }
                             break;
                         case Action.JOIN:
                             // 同步更新一个GameThread，添加player

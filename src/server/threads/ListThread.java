@@ -7,11 +7,13 @@ import ultility.Response;
 public class ListThread extends Thread{
     private ArrayList<String> nameList = new ArrayList<String>();
     private ObjectOutputStream oos;
+    private String userId;
     // TODO: 计分系统
 
-    public ListThread(ObjectOutputStream o,ArrayList<String> list){
+    public ListThread(ObjectOutputStream o,ArrayList<String> list, String id){
         oos = o;
         nameList = list;
+        userId = id;
     }
 
     public void run() {
@@ -20,7 +22,9 @@ public class ListThread extends Thread{
                 Response r = new Response(Response.PLAYERLIST);
                 String list = "";
                 for(String name : nameList){
-                    list+= name+"\n";
+                    if(!name.equals(userId)){
+                        list+= name+"\n";
+                    }
                 }
                 r.setPlayerList(list);
                 oos.writeObject(r);
