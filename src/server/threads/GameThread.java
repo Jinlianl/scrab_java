@@ -1,12 +1,10 @@
 package server.threads;
-import java.net.*;
 import java.util.ArrayList;
 import java.util.Random;
-import java.io.*;
 
 import ultility.Action;
-import ultility.Response;
 import ultility.Player;
+import ultility.Response;
 
 public class GameThread extends Thread{
     private ArrayList<Player> players = new ArrayList<Player>();
@@ -36,6 +34,13 @@ public class GameThread extends Thread{
     }
 
     public void addPlayers(Player player) {
+        // 判断是否已经存在该玩家
+        for(Player p:players){
+            if(player.getUserName().equals(p.getUserName())){
+                System.out.println("player already in room");
+                return;
+            }
+        }
         players.add(player);
     }
 

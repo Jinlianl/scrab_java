@@ -263,6 +263,10 @@ public class GameHall {
                 try {
                     Action a = new Action(Action.INVITE);
                     String selected = inviteList.getSelectedValue();
+                    // 如果邀请人是自己
+                    if(selected.equals(username)){
+                        return;
+                    }
                     a.setInviteID(selected);
                     a.setGameID(gameID);
                     out.writeObject(a);
