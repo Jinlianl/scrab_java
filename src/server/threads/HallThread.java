@@ -129,6 +129,7 @@ public class HallThread extends Thread{
                                             gameThreadList.get(index).addPlayers(player);
                                         }
                                         setLock(gameThreadList.get(index).getLock());
+                                        // 更新其他玩家已加入游戏的列表
                                         broadcastRoomPlayers(gameThreadList.get(index));
                                         break;
                                     }

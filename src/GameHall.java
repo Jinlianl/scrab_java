@@ -104,10 +104,10 @@ public class GameHall {
 
     private boolean AcceptInvitation(String fromID){
         // TODO: 判断是否同意邀请
-        String[] option = {"Reject","Agree"};
+        String[] option = {"Reject","Accept"};
         String msg = "Player "+fromID + " invite you to game";
         int selected = JOptionPane.showOptionDialog(window, msg, "Info", JOptionPane.CANCEL_OPTION,
-                                            JOptionPane.QUESTION_MESSAGE, null, option, option[0]);
+                                            JOptionPane.QUESTION_MESSAGE, null, option, option[1]);
         if(selected == 1){
             return true;
         }
@@ -137,7 +137,7 @@ public class GameHall {
     private void BuildUpGUI() {
         // Build up Game Hall
         JFrame.setDefaultLookAndFeelDecorated(true);
-        this.window = new JFrame("Game Hall");
+        this.window = new JFrame("Game Hall------"+username);
         window.setSize(300, 300);
         window.setLocation(400, 100);
         window.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -168,7 +168,7 @@ public class GameHall {
         panel.add(scroll);
 
         JButton newGame = new JButton("Start a New Game");
-        newGame.setBounds(120, 30, 160, 40);
+        newGame.setBounds(122, 21, 160, 40);
         newGame.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -186,7 +186,7 @@ public class GameHall {
         panel.add(newGame);
 
         JButton join = new JButton("Join a Game");
-        join.setBounds(120, 120, 160, 40);
+        join.setBounds(122, 115, 160, 40);
         join.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -221,32 +221,41 @@ public class GameHall {
         // TODO:Build up waiting & invitation window
         this.waitNinviteWindow = new JFrame("Waiting");
         // waitNinviteWindow.setUndecorated(true);
-        waitNinviteWindow.setSize(500, 200);
+        waitNinviteWindow.setSize(400, 250);
         waitNinviteWindow.setLocation(420, 200);
         waitNinviteWindow.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         waitNinviteWindow.setResizable(true);
 
         JPanel wpanel = new JPanel();
         wpanel.setLayout(null);
-        wpanel.setBounds(0, 0, 515, 223);
-        // panel.add(wpanel);
+        wpanel.setBounds(0, 0, 533, 260);
+        
 
         JButton start = new JButton("Start");
-        start.setBounds(202, 130, 100, 40);
+        start.setBounds(202, 146, 100, 40);
         wpanel.add(start);
 
         JButton invite = new JButton("Invite");
-        invite.setBounds(67, 130, 119, 40);
+        invite.setBounds(71, 146, 119, 40);
         wpanel.add(invite);
 
         inviteList = new JList<>();
-        inviteList.setBounds(67, 6, 125, 112);
+        inviteList.setBounds(67, 30, 125, 112);
 
         wpanel.add(inviteList);
 
         roomList = new JTextArea();
-        roomList.setBounds(209, 6, 93, 112);
+        roomList.setBounds(209, 30, 93, 112);
+        roomList.setEditable(false);
         wpanel.add(roomList);
+        
+        JLabel lblOnlineList = new JLabel("Online List");
+        lblOnlineList.setBounds(103, 6, 87, 16);
+        wpanel.add(lblOnlineList);
+        
+        JLabel lblInRoom = new JLabel("In Room");
+        lblInRoom.setBounds(209, 6, 87, 16);
+        wpanel.add(lblInRoom);
 
         invite.addActionListener(new ActionListener() {
             @Override
@@ -278,6 +287,7 @@ public class GameHall {
             }
         });
         window.setVisible(true);
-        waitNinviteWindow.setContentPane(wpanel);
+        // panel.add(wpanel);
+         waitNinviteWindow.setContentPane(wpanel);
     }
 }
