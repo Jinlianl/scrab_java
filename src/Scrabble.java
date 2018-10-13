@@ -41,7 +41,6 @@ public class Scrabble {
             public void run() {
                 EndTurn();
                 while (true) {
-                    System.out.println("I m running!");
                     try {
                         Response r = (Response) in.readObject();
                         if (r != null) {
@@ -73,13 +72,31 @@ public class Scrabble {
                                     break;
                                 case Response.JUDGE:
                                     Object[] options = {"Agree", "Disagree"};
+                                    String[] words = r.getExpectWord().split(",");
+                                    if(words.length>1){
+                                        //more than one word
+                                        options = new String[]{"Agree All", "Disagree","Agree "+words[0],"Agree "+words[1]};
+                                    }
                                     String message = r.getUserName() + " wants to get score by " + r.getExpectWord() + ".";
                                     int rc = JOptionPane.showOptionDialog(window, message, "Option", JOptionPane.CANCEL_OPTION,
                                             JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
                                     Action a = new Action(Action.JUDGE);
                                     // 直接关闭视为同意
-                                    if (rc < 1) a.setJudgeINfo(true);
-                                    else a.setJudgeINfo(false);
+                                    System.out.println("option"+rc);
+
+                                    if (rc <=0) {
+                                        //全部同意
+                                        a.setJudgeINfo(0);
+                                    } else if(rc ==1){
+                                        //不同意
+                                        a.setJudgeINfo(1);
+                                    }else if(rc ==2){
+                                        //同意第一个词
+                                        a.setJudgeINfo(2);
+                                    }else if (rc==3){
+                                        //同意第二个词
+                                        a.setJudgeINfo(3);
+                                    }
                                     out.writeObject(a);
                                     out.flush();
                                     break;

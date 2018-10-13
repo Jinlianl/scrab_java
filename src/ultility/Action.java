@@ -32,6 +32,8 @@ public class Action implements Serializable{
     private boolean agree;
     private int gameID;
     private String invitedID;
+    //0=argee,1=disagree,2=agree 1st word,2=agree second word
+    private int judgement;
 
 
     public Action(int type){
@@ -65,10 +67,12 @@ public class Action implements Serializable{
         this.expectWord = word;
     }
 
-    public void setJudgeINfo(boolean b) {
-        this.agree = b;
+    public void setJudgeINfo(int judgeINfo) {
+        this.judgement=judgeINfo;
     }
-
+    public int getJudgement(){
+        return this.judgement;
+    }
     public void setGameID(int gameID) {
         this.gameID = gameID;
     }
