@@ -57,6 +57,11 @@ public class GameThread extends Thread{
 
     private void Judge(Response r) {
         int judgeTurn = (turn + 1) % players.size();
+        System.out.println(r.getExpectWord());
+        String word = r.getExpectWord();
+        boolean first = true;
+        boolean second = true;
+
         while (judgeTurn != turn) {
             try {
                 Player judgePlayer = players.get(judgeTurn);
@@ -64,8 +69,17 @@ public class GameThread extends Thread{
                 judgePlayer.getOos().flush();
                 Action a = (Action) judgePlayer.getOis().readObject();
                 if (a != null) {
-                    if (a.isAgree()) {
+                    int judgment = a.getJudgement();
+                    if (judgment !=1) {
+                        //没有不同意
                         judgeTurn = (judgeTurn + 1) % players.size();
+                        if(judgment ==2){
+                            //只同意第一个,意味着不同意第二个,那么第二个就是FALSE
+                            second=false;
+
+                        }else if(judgment ==3) {
+                            first=false;
+                        }
                     }
                     else {
                         break;
@@ -79,15 +93,25 @@ public class GameThread extends Thread{
 
         Response score = new Response(Response.SCORE);
         if (judgeTurn == turn) {
-            String word = r.getExpectWord();
             int points=0;
-            if (word.split(",").length>0){
+            String msg=" got score!";
+            if (word.split(",").length>1){
+                System.out.println("muti-words!");
                 //more than one word
-                points = word.length()-1;
+                if(first&&second){
+                    points=word.length()-1;
+                }else if(first){
+                    points=word.split(",")[0].length();
+                }else if(second){
+                    points=word.split(",")[1].length();
+                }else{
+                    points=0;
+                    msg=" did get score!";
+                }
             }else{
                 points= word.length();
             }
-            score.setScoreInfo(points, players.get(turn).getUserName() + " got score!", players.get(turn).getUserName());
+            score.setScoreInfo(points, players.get(turn).getUserName() + msg, players.get(turn).getUserName());
             int newScore = players.get(turn).getScore()+points;
             players.get(turn).setScore(newScore);
 
