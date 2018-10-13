@@ -1,20 +1,32 @@
 package server.threads;
-import java.net.*;
 import java.util.ArrayList;
-import java.io.*;
 import java.util.Collections;
 import java.util.Comparator;
 
+import java.util.Random;
+
 import ultility.Action;
-import ultility.Response;
 import ultility.Player;
+import ultility.Response;
 
 public class GameThread extends Thread{
     private ArrayList<Player> players = new ArrayList<Player>();
     private int turn = -1;
     private boolean started = false;
     private Object lock = new Object();
+    private int gameID;
     // TODO: 计分系统
+
+    public void setGameID(){
+        Random random = new Random();
+        this.gameID = random.nextInt(100);
+    }
+    /**
+     * @return the gameID
+     */
+    public int getGameID() {
+        return gameID;
+    }
 
     public boolean isStarted() {
         return started;
@@ -25,6 +37,13 @@ public class GameThread extends Thread{
     }
 
     public void addPlayers(Player player) {
+        // 判断是否已经存在该玩家
+        for(Player p:players){
+            if(player.getUserName().equals(p.getUserName())){
+                System.out.println("player already in room");
+                return;
+            }
+        }
         players.add(player);
     }
 
