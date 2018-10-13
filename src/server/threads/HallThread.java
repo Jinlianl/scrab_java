@@ -100,6 +100,7 @@ public class HallThread extends Thread{
                             oos.writeObject(r1);
                             oos.flush();
                             System.out.println("game hosting....gameID is "+t.getGameID());
+                            broadcastRoomPlayers(t);
                             break;
                         case Action.INVITE:
                             String inviteId = a.getInvitedID();
@@ -120,7 +121,7 @@ public class HallThread extends Thread{
                             boolean success = false;
                             int ID = -1;
                             // 先判断是否有带房间ID
-                            if(a.getGameID() >0){
+                            if(a.getGameID() > 0){
                                 System.out.print("joining "+ a.getGameID());
                                 for(int index = 0;index < gameThreadList.size();index++){
                                     if(gameThreadList.get(index).getGameID() == a.getGameID()){

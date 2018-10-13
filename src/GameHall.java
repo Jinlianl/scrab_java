@@ -69,9 +69,13 @@ public class GameHall {
                                 out.flush();
                                 break;
                             case Response.PLAYERLIST:
+                                // System.out.println("update player list");
                                 String listText = r.getPlayerList();
                                 playerNames = listText.split("\n");
                                 userList.setText(listText);
+                                if (playerNames.length > 0) {
+                                    inviteList.setListData(playerNames);
+                                }
                                 break;
                             case Response.INVITE:
                                 // 获得某玩家邀请
@@ -116,9 +120,6 @@ public class GameHall {
 
     private void OpenWaitingWindow() {
         // TODO: 打开等待开始界面，加入邀请功能
-        if (this.playerNames.length > 0) {
-            this.inviteList.setListData(playerNames);
-        }
         waitNinviteWindow.setVisible(true);
 
     }
