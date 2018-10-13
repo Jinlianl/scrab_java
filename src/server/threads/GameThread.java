@@ -2,6 +2,8 @@ package server.threads;
 import java.net.*;
 import java.util.ArrayList;
 import java.io.*;
+import java.util.Collections;
+import java.util.Comparator;
 
 import ultility.Action;
 import ultility.Response;
@@ -58,7 +60,19 @@ public class GameThread extends Thread{
 
         Response score = new Response(Response.SCORE);
         if (judgeTurn == turn) {
-            score.setScoreInfo(r.getExpectWord().length(), players.get(turn).getUserName() + " got score!", players.get(turn).getUserName());
+            String word = r.getExpectWord();
+            int points=0;
+            if (word.split(",").length>0){
+                //more than one word
+                points = word.length()-1;
+            }else{
+                points= word.length();
+            }
+            score.setScoreInfo(points, players.get(turn).getUserName() + " got score!", players.get(turn).getUserName());
+            int newScore = players.get(turn).getScore()+points;
+            players.get(turn).setScore(newScore);
+
+
         }
         else {
             score.setScoreInfo(0, players.get(judgeTurn).getUserName() + " did not agree.", players.get(turn).getUserName());
@@ -105,7 +119,18 @@ public class GameThread extends Thread{
                     if (type == Action.ENDGAME) {
                         Response r = new Response(Response.ENDGAME);
                         // TODO: 显示胜利玩家
-                        r.setEndGameMessage("One player has logged out. Game ends.");
+                        Collections.sort(players, new Comparator<Player>() {
+                            @Override
+                            public int compare(Player o1, Player o2) {
+                                if(o1.getScore()>o2.getScore()){
+                                    return 1;
+                                }else{
+                                    return -1;
+                                }
+                            }
+                        });
+                        String Winner = players.get(players.size()-1).getUserName();
+                        r.setEndGameMessage("One player has logged out. Game ends"+","+Winner+" Wins!");
                         broadcast(r);
                         synchronized (this.lock) {
                             this.lock.notifyAll();
@@ -120,7 +145,18 @@ public class GameThread extends Thread{
                             System.out.println("End Game!");
                             Response r = new Response(Response.ENDGAME);
                             // TODO: 显示胜利玩家
-                            r.setEndGameMessage(" All players passed. Game ends");
+                            Collections.sort(players, new Comparator<Player>() {
+                                @Override
+                                public int compare(Player o1, Player o2) {
+                                    if(o1.getScore()>o2.getScore()){
+                                        return 1;
+                                    }else{
+                                        return -1;
+                                    }
+                                }
+                            });
+                            String Winner = players.get(players.size()-1).getUserName();
+                            r.setEndGameMessage("All players passed. Game ends"+","+Winner+" Wins!");
                             broadcast(r);
                             synchronized (this.lock) {
                                 this.lock.notifyAll();

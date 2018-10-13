@@ -5,12 +5,15 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import server.threads.HallThread;
 
-public class Player{
+public class Player {
     String userName;
     Socket socket;
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
     private HallThread hallThread;
+    private int score=0;
+
+
     
     public Player(String userName, Socket socket, ObjectInputStream in, ObjectOutputStream out){
         this.userName = userName;
@@ -46,5 +49,12 @@ public class Player{
 
     public HallThread getHallThread() {
         return hallThread;
+    }
+
+    public int getScore(){
+        return this.score;
+    }
+    public void setScore(int score){
+        this.score=score;
     }
 }

@@ -132,7 +132,6 @@ public class GameHall {
         this.window = new JFrame("Game Hall");
         window.setSize(300, 300);
         window.setLocation(400, 100);
-        window.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         window.setResizable(false);
         window.addWindowListener(new WindowAdapter() {
             @Override

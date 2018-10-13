@@ -237,7 +237,8 @@ public class Scrabble {
             String[] tokens = this.checkWords();
             // TODO: 由单选变成多选，相应的投票也需要改，可以用checkbox实现多选
             if (tokens[0].length() > 1 && tokens[1].length() > 1) {
-                Object[] options ={tokens[0], tokens[1], "Do not submit"};
+                String Combine = tokens[0]+","+tokens[1];
+                Object[] options ={tokens[0], tokens[1],Combine, "Do not submit"};
                 String message = "Which word do you want to submit for judgement?";
                 int rc = JOptionPane.showOptionDialog(window, message, "Option", JOptionPane.CANCEL_OPTION,
                         JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
