@@ -14,6 +14,7 @@ public class GameHall {
     private JFrame window;
     private JFrame waitNinviteWindow;
     private JTextArea userList;
+    private JTextArea roomList;
     private ObjectInputStream in;
     private ObjectOutputStream out;
     private int gameID = -1;
@@ -43,6 +44,7 @@ public class GameHall {
                                 // 处理join信息
                                 if (r.getStatus() == Response.SUCCESS) {
                                     gameID = r.getGameID();
+                                    System.out.println("enter in a game room, game ID is "+ gameID);
                                     OpenWaitingWindow();
                                 } else {
                                     // 弹窗提示用户
@@ -73,13 +75,19 @@ public class GameHall {
                                 break;
                             case Response.INVITE:
                                 // 获得某玩家邀请
-                                // System.out.println(r.getInviteFrom());
+                                System.out.println("invitation from" + r.getInviteFrom()+"gameID : "+ r.getGameID());
                                 if(AcceptInvitation(r.getInviteFrom())){
+                                    gameID = r.getGameID();
                                     Action joinAct = new Action(Action.JOIN);
                                     joinAct.setJoinGameInfo(username);
+                                    joinAct.setGameID(gameID);
                                     out.writeObject(joinAct);
                                     out.flush();
                                 }
+                                break;
+                            case Response.ROOMLIST:
+                                System.out.println("this memebr in room:\n"+r.getRoomlist());
+                                roomList.setText(r.getRoomlist());
                                 break;
                             default:
                                 break;
@@ -186,6 +194,7 @@ public class GameHall {
                     // 向server发送加入一个游戏请求
                     Action a = new Action(Action.JOIN);
                     a.setJoinGameInfo(username);
+                    a.setGameID(-1);
                     out.writeObject(a);
                     out.flush();
                 } catch (Exception e1) {
@@ -235,9 +244,9 @@ public class GameHall {
 
         wpanel.add(inviteList);
 
-        JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setBounds(209, 6, 93, 112);
-        wpanel.add(scrollPane);
+        roomList = new JTextArea();
+        roomList.setBounds(209, 6, 93, 112);
+        wpanel.add(roomList);
 
         invite.addActionListener(new ActionListener() {
             @Override
@@ -246,12 +255,9 @@ public class GameHall {
                     Action a = new Action(Action.INVITE);
                     String selected = inviteList.getSelectedValue();
                     a.setInviteID(selected);
+                    a.setGameID(gameID);
                     out.writeObject(a);
                     out.flush();
-                    Object[] options = {"OK"};
-                    JOptionPane.showOptionDialog(window, "invitation sent!", "Notice",
-                                            JOptionPane.CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
-                                            options[0]);
                 } catch (Exception e2) {
                     e2.printStackTrace();
                 }

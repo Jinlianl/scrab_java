@@ -45,6 +45,22 @@ public class HallThread extends Thread{
         }
     }
 
+    public void broadcastRoomPlayers(GameThread gThread){
+        Response r = new Response(Response.ROOMLIST);
+        String list = "";
+        for(int i = 0; i < gThread.getPlayersNum();i++){
+            list += gThread.getPlayers().get(i).getUserName()+"\n";
+        }
+        r.setRoomlist(list);
+        for(int i = 0; i < gThread.getPlayersNum();i++){
+            try {
+                gThread.getPlayers().get(i).getOos().writeObject(r);
+            } catch (Exception e) {
+                //TODO: handle exception
+            }
+        }
+    }
+
     public void run() {
         // TODO: 时不时发送已登录用户信息
         try {
@@ -73,22 +89,26 @@ public class HallThread extends Thread{
                     switch (type) {
                         case Action.NEW:
                             GameThread t = new GameThread();
+                            t.setGameID();
                             t.addPlayers(player);
                             synchronized (this.gameThreadList) {
                                 this.gameThreadList.add(t);
                             }
                             setLock(t.getLock());
                             Response r1 = new Response(Response.JOIN);
-                            r1.setJoinStatus(Response.SUCCESS, "Waiting for start.", this.gameThreadList.size()-1);
+                            r1.setJoinStatus(Response.SUCCESS, "Waiting for start.", t.getGameID());
                             oos.writeObject(r1);
                             oos.flush();
+                            System.out.println("game hosting....gameID is "+t.getGameID());
                             break;
                         case Action.INVITE:
                             String inviteId = a.getInvitedID();
+                            int gameID = a.getGameID();
                             for(Player p:players){
                                 if(p.getUserName().equals(inviteId)){
                                     Response r = new Response(Response.INVITE);
                                     r.setInviteFrom(player.getUserName());
+                                    r.setGameID(gameID);
                                     p.getOos().writeObject(r);
                                     p.getOos().flush();
                                 }
@@ -96,21 +116,45 @@ public class HallThread extends Thread{
                             break;
                         case Action.JOIN:
                             // 同步更新一个GameThread，添加player
-                            int i = 0;
-                            for (; i < gameThreadList.size(); i++)
+                            Response r2 = new Response(Response.JOIN);
+                            boolean success = false;
+                            int ID = -1;
+                            // 先判断是否有带房间ID
+                            if(a.getGameID() >0){
+                                System.out.print("joining "+ a.getGameID());
+                                for(int index = 0;index < gameThreadList.size();index++){
+                                    if(gameThreadList.get(index).getGameID() == a.getGameID()){
+                                        System.out.println("player enters ID: "+a.getGameID()+"room");
+                                        synchronized (this.gameThreadList) {
+                                            gameThreadList.get(index).addPlayers(player);
+                                        }
+                                        setLock(gameThreadList.get(index).getLock());
+                                        broadcastRoomPlayers(gameThreadList.get(index));
+                                        break;
+                                    }
+                                }
+                                r2.setJoinStatus(Response.SUCCESS, "Waiting for start.", a.getGameID());
+                            }else{
+                                //如果没有邀请，将随机加入游戏
+                                System.out.print("random joining "+ a.getGameID());
+                                for (int i = 0; i < gameThreadList.size(); i++)
                                 if (gameThreadList.get(i).getPlayersNum() < 4 && !gameThreadList.get(i).isStarted()) {
                                     synchronized (this.gameThreadList) {
                                         gameThreadList.get(i).addPlayers(player);
                                     }
+                                    ID = gameThreadList.get(i).getGameID();
+                                    success = true;
                                     setLock(gameThreadList.get(i).getLock());
+                                    broadcastRoomPlayers(gameThreadList.get(i));
                                     break;
                                 }
-                            Response r2 = new Response(Response.JOIN);
-                            if (i == gameThreadList.size()) {
-                                r2.setJoinStatus(Response.FAIL, "No game available.", -1);
-                            }
-                            else {
-                                r2.setJoinStatus(Response.SUCCESS, "Waiting for start.", i);
+                                if (!success) {
+                                    r2.setJoinStatus(Response.FAIL, "No game available.", -1);
+                                }
+                                else {
+                                    
+                                    r2.setJoinStatus(Response.SUCCESS, "Waiting for start.", ID);
+                                }
                             }
                             oos.writeObject(r2);
                             oos.flush();
@@ -118,12 +162,20 @@ public class HallThread extends Thread{
                         case Action.STARTGAME:
                             // 只允许start new game的人start game
                             Response r3 = new Response(Response.STARTGAME);
-                            for (int j = this.gameThreadList.get(a.getGameID()).getPlayersNum()-1; j >= 0; j--) {
-                                this.gameThreadList.get(a.getGameID()).getPlayers().get(j).getOos().writeObject(r3);
-                                this.gameThreadList.get(a.getGameID()).getPlayers().get(j).getOos().flush();
+                            int gID = a.getGameID();
+                            GameThread gThread;
+                            for(int index = 0;index < gameThreadList.size();index++){
+                                if(gameThreadList.get(index).getGameID() == gID){
+                                    gThread = gameThreadList.get(index);
+                                    for (int j = gThread.getPlayersNum()-1; j >= 0; j--) {
+                                        gThread.getPlayers().get(j).getOos().writeObject(r3);
+                                        gThread.getPlayers().get(j).getOos().flush();
+                                    }
+                                    gThread.start();
+                                    break;
+                                }
                             }
 
-                            this.gameThreadList.get(a.getGameID()).start();
                             //LockWait();
                             break;
                         case Action.STARTED:

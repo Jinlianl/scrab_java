@@ -1,6 +1,7 @@
 package server.threads;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Random;
 import java.io.*;
 
 import ultility.Action;
@@ -12,7 +13,19 @@ public class GameThread extends Thread{
     private int turn = -1;
     private boolean started = false;
     private Object lock = new Object();
+    private int gameID;
     // TODO: 计分系统
+
+    public void setGameID(){
+        Random random = new Random();
+        this.gameID = random.nextInt(100);
+    }
+    /**
+     * @return the gameID
+     */
+    public int getGameID() {
+        return gameID;
+    }
 
     public boolean isStarted() {
         return started;
