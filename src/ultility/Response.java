@@ -36,6 +36,7 @@ public class Response implements Serializable {
     private String playerList;
     private String inviteFrom;
     private String roomlist;
+    private String scoreboard;
 
     public Response (int type) {
         responseType = type;
@@ -73,6 +74,9 @@ public class Response implements Serializable {
         score = s;
         message = m;
         userName = user;
+    }
+    public void setScoreBoard(String board) {
+        scoreboard = board;
     }
 
     public void setTurnMessage(String name) {
@@ -116,6 +120,9 @@ public class Response implements Serializable {
 
     public int getScore() {
         return score;
+    }
+    public String getScoreboard() {
+        return scoreboard;
     }
 
     public String getPlayerList(){

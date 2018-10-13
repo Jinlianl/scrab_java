@@ -96,7 +96,16 @@ public class GameThread extends Thread{
         else {
             score.setScoreInfo(0, players.get(judgeTurn).getUserName() + " did not agree.", players.get(turn).getUserName());
         }
+        score.setScoreBoard(createBoard());
         broadcast(score);
+    }
+
+    private String createBoard(){
+        String board = "";
+        for(Player p :players){
+            board += p.getUserName()+" : "+p.getScore()+"\n";
+        }
+        return board;
     }
 
     private void broadcast(Response r) {

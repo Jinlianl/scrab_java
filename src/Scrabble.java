@@ -12,6 +12,7 @@ public class Scrabble {
     private JButton passButton;
     private JButton doneButton;
     private JLabel turnLabel;
+    private JTextArea scoreBoard;
     private JLabel[] scores = new JLabel[4];
     private ArrayList<String> playerNames = new ArrayList<String>();
 
@@ -25,6 +26,7 @@ public class Scrabble {
     private Thread thread;
 
     private Object lock;
+    private JLabel lblNewLabel;
 
     public Scrabble(String username, ObjectInputStream in, ObjectOutputStream out, Object lock) {
         this.username = username;
@@ -41,7 +43,7 @@ public class Scrabble {
             public void run() {
                 EndTurn();
                 while (true) {
-                    System.out.println("I m running!");
+                    // System.out.println("I m running!");
                     try {
                         Response r = (Response) in.readObject();
                         if (r != null) {
@@ -89,7 +91,9 @@ public class Scrabble {
                                     textFields[r.getCoor_x()][r.getCoor_y()].setBackground(Color.YELLOW);
                                     break;
                                 case Response.SCORE:
-                                    String msg = r.getMessage().replace(username, "You");
+                                    String msg = r.getMessage();
+                                    // System.out.print(r.getScoreboard());
+                                    scoreBoard.setText(r.getScoreboard());
                                     Object[] option = {"OK"};
                                     JOptionPane.showOptionDialog(window, msg, "Info", JOptionPane.CANCEL_OPTION,
                                             JOptionPane.QUESTION_MESSAGE, null, option, option[0]);
@@ -342,6 +346,17 @@ public class Scrabble {
         this.setUpLabels(panel);
 
         window.setContentPane(panel);
+        
+        scoreBoard = new JTextArea();
+        scoreBoard.setBackground(Color.CYAN);
+        scoreBoard.setBounds(625, 168, 150, 130);
+        scoreBoard.setEditable(false);
+        panel.add(scoreBoard);
+        
+        lblNewLabel = new JLabel("Score Board:");
+        lblNewLabel.setBounds(625, 142, 77, 16);
+        panel.add(lblNewLabel);
+        
         window.setVisible(true);
     }
 
@@ -355,6 +370,7 @@ public class Scrabble {
         for (int i = 0; i < playerNames.size(); i++) {
             JLabel score = new JLabel();
             if (i > 0) {
+                scoreBoard.append(playerNames.get(i) + "'s score: 0");
                 score.setText(playerNames.get(i) + "'s score: 0");
             }
             else {
