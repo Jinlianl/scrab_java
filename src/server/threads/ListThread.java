@@ -17,7 +17,7 @@ public class ListThread extends Thread{
     }
 
     public void run() {
-        while (!interrupted()) {
+        while (!isInterrupted()) {
             if(nameList.size() < 1){
                 continue;
             }
@@ -33,9 +33,6 @@ public class ListThread extends Thread{
                 oos.writeObject(r);
                 oos.flush();
                 Thread.sleep(3000);
-            }
-            catch (InterruptedException e){
-                System.out.println("Stop sending list");
             }
             catch (Exception e) {
                 // e.printStackTrace();

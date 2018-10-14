@@ -190,11 +190,8 @@ public class HallThread extends Thread{
                     }
                 }
             }
-            catch(java.net.SocketException e){
-                System.out.println("an user log out");
-            }
-            catch(EOFException e){
-                //
+            catch (EOFException e){
+                 System.out.println("steam closed");
             }
             catch (Exception e) {
                 e.printStackTrace();
