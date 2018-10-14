@@ -192,6 +192,7 @@ public class HallThread extends Thread{
             }
             catch (EOFException e){
                  System.out.println("steam closed");
+                 break;
             }
             catch (Exception e) {
                 e.printStackTrace();
