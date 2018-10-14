@@ -63,7 +63,7 @@ public class Scrabble {
                             }
                             switch (type) {
                                 case Response.TURN:
-                                    System.out.println("RECEIVE TURN");
+                                    // System.out.println("RECEIVE TURN");
                                     if (r.getTurn().equals(username)) {
                                         // 设定为自己的turn，可以操作了
                                         turnLabel.setText("Your Turn!");
@@ -84,7 +84,7 @@ public class Scrabble {
                                             JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
                                     Action a = new Action(Action.JUDGE);
                                     // 直接关闭视为同意
-                                    System.out.println("option"+rc);
+                                    // System.out.println("option"+rc);
 
                                     if (rc <=0) {
                                         //全部同意

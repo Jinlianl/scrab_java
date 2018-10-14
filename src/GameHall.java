@@ -90,7 +90,7 @@ public class GameHall {
                                 }
                                 break;
                             case Response.ROOMLIST:
-                                System.out.println("this memebr in room:\n"+r.getRoomlist());
+                                System.out.println("these players in room:\n"+r.getRoomlist());
                                 roomList.setText(r.getRoomlist());
                                 break;
                             default:

@@ -32,7 +32,9 @@ public class Login {
             this.socket = new Socket(this.host, this.port);
             this.out = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 
-        } catch (UnknownHostException e) {
+        }catch(java.net.ConnectException e){
+        	System.out.println("connection fail");
+        }catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();

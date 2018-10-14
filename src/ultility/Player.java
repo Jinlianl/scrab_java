@@ -32,6 +32,15 @@ public class Player {
     public String getUserName() {
         return userName;
     }
+    public void closeSocket(){
+        try {
+            this.oos.close();
+            this.ois.close();
+            this.socket.close();
+        } catch (Exception e) {
+            //TODO: handle exception
+        }
+    }
     /**
      * @return the socket
      */

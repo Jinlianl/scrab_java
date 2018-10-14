@@ -29,7 +29,6 @@ public class LoginThread extends Thread{
                     ois = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
                 }
                 Object obj = ois.readObject();
-//                System.out.println(obj.getClass());
                 if(obj.getClass() == Action.class){
                     Action action = (Action)obj;
                     String userName = action.getUserName();

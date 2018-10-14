@@ -75,15 +75,14 @@ public class HallThread extends Thread{
                     int type = a.getActionType();
                     //System.out.println("server code:"+type);                    
                     if (type == Action.LOGOUT) {
+                        playerListThread.interrupt();
                         synchronized (this.nameList) {
                             this.nameList.remove(player.getUserName());
-                            // for(String str:this.nameList){
-                            //     System.out.println("current user:"+ str);
-                            // }
                         }
                         synchronized (this.players) {
                             this.players.remove(player);
                         }
+                        player.closeSocket();
                         break;
                     }
                     switch (type) {
@@ -99,7 +98,7 @@ public class HallThread extends Thread{
                             r1.setJoinStatus(Response.SUCCESS, "Waiting for start.", t.getGameID());
                             oos.writeObject(r1);
                             oos.flush();
-                            System.out.println("game hosting....gameID is "+t.getGameID());
+                            System.out.println("game lobby created. Game ID : "+t.getGameID());
                             broadcastRoomPlayers(t);
                             break;
                         case Action.INVITE:
@@ -190,6 +189,12 @@ public class HallThread extends Thread{
                             break;
                     }
                 }
+            }
+            catch(java.net.SocketException e){
+                System.out.println("an user log out");
+            }
+            catch(EOFException e){
+                //
             }
             catch (Exception e) {
                 e.printStackTrace();

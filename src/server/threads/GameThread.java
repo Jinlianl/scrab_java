@@ -19,7 +19,7 @@ public class GameThread extends Thread{
 
     public void setGameID(){
         Random random = new Random();
-        this.gameID = random.nextInt(100);
+        this.gameID = random.nextInt(1000);
     }
     /**
      * @return the gameID

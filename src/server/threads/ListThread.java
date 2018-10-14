@@ -17,7 +17,10 @@ public class ListThread extends Thread{
     }
 
     public void run() {
-        while (true) {
+        while (!interrupted()) {
+            if(nameList.size() < 1){
+                continue;
+            }
             try {
                 Response r = new Response(Response.PLAYERLIST);
                 String list = "";
@@ -31,8 +34,11 @@ public class ListThread extends Thread{
                 oos.flush();
                 Thread.sleep(3000);
             }
+            catch (InterruptedException e){
+                System.out.println("Stop sending list");
+            }
             catch (Exception e) {
-                e.printStackTrace();
+                // e.printStackTrace();
                 break;
             }
         }
