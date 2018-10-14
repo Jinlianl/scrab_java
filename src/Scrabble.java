@@ -132,6 +132,7 @@ public class Scrabble {
                     }
                     catch (Exception e1) {
                         e1.printStackTrace();
+                        JOptionPane.showMessageDialog(window,"Oops!Fail to connect to the server,please try again!","Warning",JOptionPane.WARNING_MESSAGE);
                         break;
                     }
                 }
@@ -320,6 +321,7 @@ public class Scrabble {
             out.flush();
         }
         catch (Exception e) {
+            JOptionPane.showMessageDialog(window,"Oops!Fail to connect to the server,please try again!","Warning",JOptionPane.WARNING_MESSAGE);
             e.printStackTrace();
         }
     }

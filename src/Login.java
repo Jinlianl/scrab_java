@@ -34,6 +34,7 @@ public class Login {
 
         }catch(java.net.ConnectException e){
         	System.out.println("connection fail");
+            JOptionPane.showMessageDialog(window,"Oops!Fail to connect to the server,please try again!","Warning",JOptionPane.WARNING_MESSAGE);
         }catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -96,6 +97,7 @@ public class Login {
                     }
                 } catch (Exception e1) {
                     e1.printStackTrace();
+                    JOptionPane.showMessageDialog(window,"Oops!Fail to connect to the server,please try again!","Warning",JOptionPane.WARNING_MESSAGE);
                 }
             }
         });

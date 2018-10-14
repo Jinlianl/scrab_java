@@ -99,6 +99,7 @@ public class GameHall {
                         }
                     }
                 } catch (Exception e) {
+                    JOptionPane.showMessageDialog(window,"Oops!Fail to connect to the server,please try again!","Warning",JOptionPane.WARNING_MESSAGE);
                     e.printStackTrace();
                 }
             }

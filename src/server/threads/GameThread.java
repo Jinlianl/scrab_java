@@ -106,7 +106,7 @@ public class GameThread extends Thread{
                     points=word.split(",")[1].length();
                 }else{
                     points=0;
-                    msg=" did get score!";
+                    msg=" did not get score!";
                 }
             }else{
                 points= word.length();
